@@ -121,6 +121,9 @@ Here are some screenshots demonstrating the WalkMeThrough library in action:
 
 <img src="https://github.com/user-attachments/assets/e9956af8-32f0-44d0-a135-902500376ef5" alt="drawing" width="400"/>
 
+### License
+This project is licensed under the MIT License. See the LICENSE file for more details.
+
 
 
 
