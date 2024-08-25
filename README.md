@@ -114,3 +114,12 @@ The WalkthroughBuilder class allows you to configure the following:
 - `setDialogPosition(position: Position)`: Position of the dialog relative to the highlighted view.
 setOnOutsideClickListener(listener: () -> Unit): Callback for clicks outside the dialog.
 setOnCloseClick(listener: () -> Unit): Callback for the close button click.
+
+### 4. Screenshots
+
+Here are some screenshots demonstrating the WalkMeThrough library in action:
+
+![image](https://github.com/user-attachments/assets/952c7943-3532-493b-8eae-7a6be13810d3)
+
+
+
