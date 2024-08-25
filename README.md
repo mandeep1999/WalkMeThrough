@@ -119,8 +119,7 @@ setOnCloseClick(listener: () -> Unit): Callback for the close button click.
 
 Here are some screenshots demonstrating the WalkMeThrough library in action:
 
-![Screenshot_20240825_153414](https://github.com/user-attachments/assets/e9956af8-32f0-44d0-a135-902500376ef5)
-<img src="https://github.com/user-attachments/assets/e9956af8-32f0-44d0-a135-902500376ef5" alt="drawing" width="200"/>
+<img src="https://github.com/user-attachments/assets/e9956af8-32f0-44d0-a135-902500376ef5" alt="drawing" width="400"/>
 
 
 
