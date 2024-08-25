@@ -11,6 +11,7 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import `in`.mandeep_singh.walkmethrough.walk_me_through.data.enums.Position
@@ -51,6 +52,7 @@ internal class OverlayScreen @JvmOverloads constructor(
 
     internal fun build(
         viewToHighlight: View,
+        parentViewGroup: ViewGroup,
         dialogBox: DialogBox,
         dialogPosition: Position? = null,
         onOutsideClick: (() -> Unit)? = null
@@ -95,7 +97,19 @@ internal class OverlayScreen @JvmOverloads constructor(
                 dialogParams.topMargin = centerY
                 dialogBox.layoutParams = dialogParams
                 dialogBox.visibility = View.VISIBLE
+                invalidate()
+            }
+        })
 
+        viewToHighlight.viewTreeObserver?.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                viewToHighlight.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                layoutParams = LayoutParams(
+                    LayoutParams.MATCH_PARENT,
+                    LayoutParams.MATCH_PARENT
+                )
+                parentViewGroup.addView(this@OverlayScreen)
                 invalidate()
             }
         })
@@ -141,12 +155,17 @@ internal class OverlayScreen @JvmOverloads constructor(
     // Builder class moved to the bottom
     class OverlayScreenBuilder(private val context: Context) {
         private var viewToHighlight: View? = null
+        private var parentViewGroup: ViewGroup? = null
         private var dialogBox: DialogBox? = null
         private var dialogPosition: Position? = null
         private var onOutsideClick: (() -> Unit)? = null
 
         fun setViewToHighlight(view: View) = apply {
             this.viewToHighlight = view
+        }
+
+        fun setParentViewGroup(viewGroup: ViewGroup) = apply {
+            this.parentViewGroup = viewGroup
         }
 
         fun setDialogBox(dialogBox: DialogBox) = apply {
@@ -166,14 +185,18 @@ internal class OverlayScreen @JvmOverloads constructor(
             if (viewToHighlight == null) {
                 throw IllegalArgumentException("View to highlight must be provided")
             }
+            if (parentViewGroup == null) {
+                throw IllegalArgumentException("Parent View Group must be provided")
+            }
             if (dialogBox == null) {
-                throw IllegalArgumentException("`in`.mandeep_singh.walkmethrough.walk_me_through.components.DialogBox must be provided")
+                throw IllegalArgumentException("DialogBox must be provided")
             }
 
             // Create OverlayScreen instance and build it with the specified parameters
             val overlayScreen = OverlayScreen(context)
             overlayScreen.build(
                 viewToHighlight = viewToHighlight!!,
+                parentViewGroup = parentViewGroup!!,
                 dialogBox = dialogBox!!,
                 dialogPosition = dialogPosition,
                 onOutsideClick = onOutsideClick

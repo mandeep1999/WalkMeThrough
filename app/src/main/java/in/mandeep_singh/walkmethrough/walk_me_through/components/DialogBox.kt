@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import `in`.mandeep_singh.walkmethrough.R
@@ -98,6 +99,12 @@ internal class DialogBox @JvmOverloads constructor(
         textColor?.let { binding.backButton.setTextColor(it) }
     }
 
+    private fun removeViewFromParent() {
+        (parent as? OverlayScreen)?.let { overlayScreen ->
+            (overlayScreen.parent as? ViewGroup)?.removeView(overlayScreen)
+        }
+    }
+
     private fun setUpClickListeners(
         onBackClick: (() -> Unit)?,
         onNextClick: (() -> Unit)?,
@@ -105,17 +112,20 @@ internal class DialogBox @JvmOverloads constructor(
     ) {
         binding.backButton.setOnClickListener {
             onBackClick?.let {
-                binding.backButton.visibility = View.VISIBLE
+                removeViewFromParent()
                 onBackClick.invoke()
             }
         }
         binding.nextButton.setOnClickListener {
             onNextClick?.let {
-                binding.nextButton.visibility = View.VISIBLE
+                removeViewFromParent()
                 onNextClick.invoke()
             }
         }
-        binding.closeIcon.setOnClickListener { onCloseClick?.invoke() }
+        binding.closeIcon.setOnClickListener {
+            removeViewFromParent()
+            onCloseClick?.invoke()
+        }
 
         if (onBackClick != null && onNextClick != null) {
             binding.space.visibility = View.VISIBLE

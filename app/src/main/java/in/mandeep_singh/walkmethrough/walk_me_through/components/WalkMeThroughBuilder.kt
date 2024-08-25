@@ -3,6 +3,7 @@ package `in`.mandeep_singh.walkmethrough.walk_me_through.components
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.View
+import android.view.ViewGroup
 import `in`.mandeep_singh.walkmethrough.walk_me_through.data.enums.Position
 import `in`.mandeep_singh.walkmethrough.walk_me_through.data.models.DialogModel
 import `in`.mandeep_singh.walkmethrough.walk_me_through.data.models.PaddingModel
@@ -10,12 +11,15 @@ import `in`.mandeep_singh.walkmethrough.walk_me_through.data.models.PaddingModel
 class WalkthroughBuilder(private val context: Context) {
 
     private var viewToHighlight: View? = null
+    private var parentViewGroup: ViewGroup? = null
     private var dialogModel = DialogModel()
     private var dialogPosition: Position? = null
     private var onOutsideClick: (() -> Unit)? = null
 
     // Methods to configure the OverlayScreen
     fun setViewToHighlight(view: View) = apply { this.viewToHighlight = view }
+
+    fun setParentViewGroup(viewGroup: ViewGroup) = apply { this.parentViewGroup = viewGroup }
 
     fun setDialogPosition(position: Position) = apply { this.dialogPosition = position }
 
@@ -82,6 +86,10 @@ class WalkthroughBuilder(private val context: Context) {
             throw IllegalArgumentException("View to highlight must be provided")
         }
 
+        if (parentViewGroup == null) {
+            throw IllegalArgumentException("Parent View Group must be provided")
+        }
+
         val dialogBox = DialogBox.DialogBoxBuilder(context)
             .setTitleText(dialogModel.titleText)
             .setTitleTextColor(dialogModel.titleTextColor)
@@ -107,6 +115,7 @@ class WalkthroughBuilder(private val context: Context) {
 
         return OverlayScreen.OverlayScreenBuilder(context)
             .setViewToHighlight(viewToHighlight!!)
+            .setParentViewGroup(parentViewGroup!!)
             .setDialogBox(dialogBox)
             .setDialogPosition(dialogPosition)
             .setOnOutsideClickListener(onOutsideClick)

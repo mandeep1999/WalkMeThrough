@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import `in`.mandeep_singh.walkmethrough.databinding.ActivityMainBinding
-import `in`.mandeep_singh.walkmethrough.walk_me_through.WalkthroughManager
+import `in`.mandeep_singh.walkmethrough.walk_me_through.components.WalkthroughBuilder
 import `in`.mandeep_singh.walkmethrough.walk_me_through.data.enums.Position
 
 
@@ -25,29 +25,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        val walkthroughManager = WalkthroughManager(this)
-
-        walkthroughManager.showWalkthrough(
-            rootView = binding.content,
-            viewToHighlight = binding.textView,
-            configureBuilder = {
-                setTitleText("Demo Title Text")
-                setDescriptionText("This is a demo description")
-                setNextButtonText("Next btn")
-                setBackButtonText("Back btn")
-                setTitleTextColor(Color.parseColor("#FFA500"))
-                setDescriptionTextColor(Color.parseColor("#3F00FF"))
-                setBackButtonBackground(getBorderedDrawable())
-                setNextButtonBackground(getSolidDrawable())
-                setBackButtonTextColor(Color.parseColor("#FFA500"))
-                setNextButtonTextColor(Color.parseColor("#FFFFFF"))
-                setOnBackClick(::onBackClick)
-                setOnNextClick(::onNextClick)
-                setDialogPosition(Position.CENTER)
-                setOnOutsideClickListener(::onOutsideClick)
-                setOnCloseClick { walkthroughManager.removeWalkthrough() }
-            }
-        )
+        WalkthroughBuilder(this)
+            .setViewToHighlight(binding.textView)
+            .setParentViewGroup(binding.content)
+            .setTitleText("Demo Title Text")
+            .setDescriptionText("This is a demo description")
+            .setNextButtonText("Next btn")
+            .setBackButtonText("Back btn")
+            .setTitleTextColor(Color.parseColor("#FFA500"))
+            .setDescriptionTextColor(Color.parseColor("#3F00FF"))
+            .setBackButtonBackground(getBorderedDrawable())
+            .setNextButtonBackground(getSolidDrawable())
+            .setBackButtonTextColor(Color.parseColor("#FFA500"))
+            .setNextButtonTextColor(Color.parseColor("#FFFFFF"))
+            .setOnBackClick(::onBackClick)
+            .setOnNextClick(::onNextClick)
+            .setDialogPosition(Position.CENTER)
+            .setOnOutsideClickListener(::onOutsideClick)
+            .setOnCloseClick(::onCloseClick)
+            .build()
     }
 
 
@@ -61,6 +57,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun onOutsideClick() {
         Toast.makeText(this, "Outside Button", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun onCloseClick() {
+        Toast.makeText(this, "Close Button", Toast.LENGTH_SHORT).show()
     }
 
     private fun getBorderedDrawable(): GradientDrawable {
