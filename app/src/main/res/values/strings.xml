@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">WalkMeThrough</string>
     <string name="close">close</string>
+    <string name="this_is_title_text">This is Title Text</string>
+    <string name="this_is_description_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</string>
+    <string name="back">Back</string>
+    <string name="next">Next</string>
 </resources>

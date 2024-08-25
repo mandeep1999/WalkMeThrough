@@ -3,13 +3,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="grey">#585858</color>
-
-
-    <color name="blue">#2196F3</color>
-    <color name="blue_light">#64B5F6</color>
-    <color name="blue_darker">#1976D2</color>
-
-    <color name="orange">#ffa500</color>
+    <color name="text_black">#161314</color>
+    <color name="indigo">#4B0082</color>
 
 
 </resources>

@@ -3,7 +3,7 @@
 
 
     <style name="TitleTextView">
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/text_black</item>
         <item name="android:padding">4dp</item>
         <item name="android:gravity">center</item>
         <item name="android:textStyle">bold</item>

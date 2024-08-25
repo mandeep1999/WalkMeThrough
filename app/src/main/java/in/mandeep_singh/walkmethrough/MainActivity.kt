@@ -28,16 +28,24 @@ class MainActivity : AppCompatActivity() {
         WalkthroughBuilder(this)
             .setViewToHighlight(binding.textView)
             .setParentViewGroup(binding.content)
-            .setTitleText("Demo Title Text")
-            .setDescriptionText("This is a demo description")
-            .setNextButtonText("Next btn")
-            .setBackButtonText("Back btn")
-            .setTitleTextColor(Color.parseColor("#FFA500"))
-            .setDescriptionTextColor(Color.parseColor("#3F00FF"))
-            .setBackButtonBackground(getBorderedDrawable())
-            .setNextButtonBackground(getSolidDrawable())
-            .setBackButtonTextColor(Color.parseColor("#FFA500"))
-            .setNextButtonTextColor(Color.parseColor("#FFFFFF"))
+            .setTitleText(getString(R.string.this_is_title_text))
+            .setDescriptionText(getString(R.string.this_is_description_text))
+            .setNextButtonText(getString(R.string.next))
+            .setBackButtonText(getString(R.string.back))
+            .setBackButtonBackground(
+                ContextCompat.getDrawable(
+                    this,
+                    R.drawable.curve_background_with_indigo_border
+                )
+            )
+            .setNextButtonBackground(
+                ContextCompat.getDrawable(
+                    this,
+                    R.drawable.curve_solid_indigo_background_with_indigo_border
+                )
+            )
+            .setBackButtonTextColor(getColor(R.color.indigo))
+            .setNextButtonTextColor(getColor(R.color.white))
             .setOnBackClick(::onBackClick)
             .setOnNextClick(::onNextClick)
             .setDialogPosition(Position.CENTER)
@@ -61,24 +69,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun onCloseClick() {
         Toast.makeText(this, "Close Button", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun getBorderedDrawable(): GradientDrawable {
-        val drawable = GradientDrawable()
-        drawable.shape = GradientDrawable.RECTANGLE
-        drawable.setColor(ContextCompat.getColor(this, R.color.white))
-        drawable.cornerRadius = 28f // Set corner radius
-        drawable.setStroke(2, ContextCompat.getColor(this, R.color.orange))
-        return drawable
-    }
-
-    private fun getSolidDrawable(): GradientDrawable {
-        val drawable = GradientDrawable()
-        drawable.shape = GradientDrawable.RECTANGLE
-        drawable.setColor(ContextCompat.getColor(this, R.color.orange))
-        drawable.cornerRadius = 28f // Set corner radius
-        drawable.setStroke(2, ContextCompat.getColor(this, R.color.orange))
-        return drawable
     }
 
 }
