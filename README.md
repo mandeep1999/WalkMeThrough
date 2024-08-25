@@ -16,3 +16,9 @@ Include the library dependency in your `build.gradle` file:
 dependencies {
     implementation 'in.mandeep_singh.walkmethrough:walk_me_through:1.0.0'
 }
+```
+
+### 2. Set Up Your Activity
+
+Here’s how to set up the walkthrough using the WalkthroughBuilder class in your MainActivity:
+
