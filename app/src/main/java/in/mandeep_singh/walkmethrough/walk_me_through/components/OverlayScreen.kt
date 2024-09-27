@@ -20,6 +20,17 @@ import `in`.mandeep_singh.walkmethrough.walk_me_through.utils.Utility.getWindowH
 import `in`.mandeep_singh.walkmethrough.walk_me_through.utils.Utility.statusBarHeight
 import `in`.mandeep_singh.walkmethrough.walk_me_through.utils.Utility.toDp
 
+/**
+ * Custom view that displays an overlay with a highlighted area and a dialog box.
+ *
+ * The overlay obscures the entire screen except for the area around the view to be highlighted.
+ * A dialog box is positioned relative to the highlighted view, with an option to specify its position.
+ * The overlay also responds to clicks outside the dialog box.
+ *
+ * @param context The context in which the view is running.
+ * @param attrs Optional attribute set for custom XML attributes.
+ * @param defStyleAttr Optional default style attributes.
+ */
 internal class OverlayScreen @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -50,6 +61,19 @@ internal class OverlayScreen @JvmOverloads constructor(
             setMargins(twelveDP, sixDP, twelveDP, sixDP)
         }
 
+    /**
+     * Builds and displays the overlay with the specified parameters.
+     *
+     * This method removes any existing highlights, calculates the dimensions for the overlay, and positions
+     * the dialog box relative to the highlighted view. It also handles layout changes to ensure proper positioning
+     * of the dialog box.
+     *
+     * @param viewToHighlight The view that will be highlighted by the overlay.
+     * @param parentViewGroup The parent view group that will contain the overlay.
+     * @param dialogBox The dialog box to be displayed.
+     * @param dialogPosition Optional position for the dialog box relative to the highlighted view.
+     * @param onOutsideClick Optional callback to be invoked when clicking outside the dialog box.
+     */
     internal fun build(
         viewToHighlight: View,
         parentViewGroup: ViewGroup,
@@ -71,9 +95,7 @@ internal class OverlayScreen @JvmOverloads constructor(
         viewToHighlight.getLocationOnScreen(viewLocation)
 
         val topOverlayHeight = viewLocation[1] - parentLocation[1]
-
         val highlightHeight = viewToHighlight.height
-
         val bottomOverlayHeight = getWindowHeight(context) - (topOverlayHeight + highlightHeight)
 
         dialogParams.topMargin = -3500
@@ -115,6 +137,14 @@ internal class OverlayScreen @JvmOverloads constructor(
         })
     }
 
+    /**
+     * Draws the overlay with a hole cut out around the highlighted view.
+     *
+     * This method creates a bitmap for the overlay and draws a transparent area over the highlighted view,
+     * creating a "hole" effect. The overlay is then drawn onto the main canvas.
+     *
+     * @param canvas The canvas on which to draw the overlay.
+     */
     override fun dispatchDraw(canvas: Canvas) {
         // Create a bitmap and canvas to draw the holeRect on
         val overlayBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
@@ -147,39 +177,84 @@ internal class OverlayScreen @JvmOverloads constructor(
         super.dispatchDraw(canvas)
     }
 
+    /**
+     * Handles touch events on the overlay.
+     *
+     * This method invokes the `onOutsideClick` callback if it is set, and returns true to indicate that the
+     * touch event has been handled.
+     *
+     * @param event The motion event that triggered this method.
+     * @return True to indicate that the touch event has been handled.
+     */
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         onOutsideClick?.invoke()
         return true
     }
 
-    // Builder class moved to the bottom
-    class OverlayScreenBuilder(private val context: Context) {
+    // Builder class for constructing OverlayScreen instances
+    internal class OverlayScreenBuilder(private val context: Context) {
         private var viewToHighlight: View? = null
         private var parentViewGroup: ViewGroup? = null
         private var dialogBox: DialogBox? = null
         private var dialogPosition: Position? = null
         private var onOutsideClick: (() -> Unit)? = null
 
+        /**
+         * Sets the view to be highlighted by the overlay.
+         *
+         * @param view The view to highlight.
+         * @return The builder instance for chaining.
+         */
         fun setViewToHighlight(view: View) = apply {
             this.viewToHighlight = view
         }
 
+        /**
+         * Sets the parent view group for the overlay.
+         *
+         * @param viewGroup The view group that will contain the overlay.
+         * @return The builder instance for chaining.
+         */
         fun setParentViewGroup(viewGroup: ViewGroup) = apply {
             this.parentViewGroup = viewGroup
         }
 
+        /**
+         * Sets the dialog box to be displayed on the overlay.
+         *
+         * @param dialogBox The dialog box to show.
+         * @return The builder instance for chaining.
+         */
         fun setDialogBox(dialogBox: DialogBox) = apply {
             this.dialogBox = dialogBox
         }
 
+        /**
+         * Sets the position of the dialog box relative to the highlighted view.
+         *
+         * @param position The position of the dialog box.
+         * @return The builder instance for chaining.
+         */
         fun setDialogPosition(position: Position?) = apply {
             this.dialogPosition = position
         }
 
+        /**
+         * Sets a callback to be invoked when clicking outside the dialog box.
+         *
+         * @param listener The callback to invoke on outside click.
+         * @return The builder instance for chaining.
+         */
         fun setOnOutsideClickListener(listener: (() -> Unit)?) = apply {
             this.onOutsideClick = listener
         }
 
+        /**
+         * Builds and returns an `OverlayScreen` instance with the configured parameters.
+         *
+         * @return The constructed `OverlayScreen` instance.
+         * @throws IllegalArgumentException if any required parameters are missing.
+         */
         fun build(): OverlayScreen {
             // Ensure required parameters are set
             if (viewToHighlight == null) {
