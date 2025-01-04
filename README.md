@@ -17,7 +17,7 @@ Include the library dependency in your `build.gradle` file:
 
 ```gradle
 dependencies {
-    implementation 'in.mandeep_singh.walkmethrough:walk_me_through:1.0.0'
+    implementation 'com.github.mandeep1999:WalkMeThrough:v1.0.1'
 }
 ```
 
