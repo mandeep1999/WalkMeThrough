@@ -1,3 +1,6 @@
+[![](https://jitpack.io/v/mandeep1999/WalkMeThrough.svg)](https://jitpack.io/#mandeep1999/WalkMeThrough)
+
+
 # WalkMeThrough
 
 **WalkMeThrough** is an Android library designed to guide users through your app by highlighting specific views and displaying instructional dialogs. This README demonstrates how to set up and use the `WalkthroughBuilder` to create a walkthrough experience in your application.
