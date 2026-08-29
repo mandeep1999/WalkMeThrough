@@ -1,0 +1,37 @@
+name: Request owner review
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, synchronize]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  request-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const reviewer = 'mandeep1999';
+            const pr = context.payload.pull_request;
+
+            // CODEOWNERS does not request review from the PR author — add explicitly.
+            const { data: existing } = await github.rest.pulls.listRequestedReviewers({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+            });
+
+            const alreadyRequested = existing.users?.some((user) => user.login === reviewer);
+            if (alreadyRequested) {
+              return;
+            }
+
+            await github.rest.pulls.requestReviewers({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              reviewers: [reviewer],
+            });
