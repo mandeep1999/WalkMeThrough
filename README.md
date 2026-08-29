@@ -24,6 +24,8 @@ dependencies {
 }
 ```
 
+**Requirements:** Android API 24+ (Android 7.0), Kotlin.
+
 ## Quick start
 
 ```kotlin
@@ -155,7 +157,7 @@ Walkthrough.with(this)
 
 ## Screenshots
 
-<img src="https://github.com/user-attachments/assets/e9956af8-32f0-44d0-a135-902500376ef5" alt="WalkMeThrough screenshot" width="400"/>
+<img src="docs/screenshots/walkthrough-demo.webp" alt="WalkMeThrough screenshot" width="280"/>
 
 ## License
 
