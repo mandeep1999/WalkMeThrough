@@ -1,6 +1,5 @@
 package `in`.mandeep_singh.walkmethrough
 
-import `in`.mandeep_singh.walkmethrough.WalkthroughCoordinator
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup

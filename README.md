@@ -88,26 +88,6 @@ Walkthrough.from(this)
     .show()
 ```
 
-## Single-step API (legacy)
-
-`WalkthroughBuilder` remains available for one-off card steps:
-
-```kotlin
-import `in`.mandeep_singh.walkmethrough.walk_me_through.components.WalkthroughBuilder
-import `in`.mandeep_singh.walkmethrough.walk_me_through.data.enums.Position
-
-WalkthroughBuilder(this)
-    .setViewToHighlight(findViewById(R.id.text_view))
-    .setTitleText("Welcome")
-    .setDescriptionText("Tap Next to continue.")
-    .setNextButtonText("Next")
-    .setDialogPosition(Position.CENTER)
-    .setOnNextClick { /* ... */ }
-    .build()
-```
-
-`setParentViewGroup(...)` is optional; when omitted, the library uses the activity content root.
-
 ## Custom UI
 
 - Card steps: `setDialogContent(...)` with `WalkthroughDialogContent`
