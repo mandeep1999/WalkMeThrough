@@ -24,6 +24,8 @@ dependencies {
 }
 ```
 
+**Requirements:** Android API 24+ (Android 7.0), Kotlin.
+
 ## Quick start
 
 ```kotlin
@@ -157,7 +159,7 @@ Walkthrough.with(this)
 <img width="1080" height="2400" alt="Screenshot_20260829_154934" src="https://github.com/user-attachments/assets/43ff34b2-f6af-4afe-9ef7-2b2bf4c96511" />
 <img width="1080" height="2400" alt="Screenshot_20260829_155038" src="https://github.com/user-attachments/assets/7076fea7-510a-4913-b37d-3d938dee0be6" />
 
-<img src="https://github.com/user-attachments/assets/e9956af8-32f0-44d0-a135-902500376ef5" alt="WalkMeThrough screenshot" width="400"/>
+<img src="docs/screenshots/walkthrough-demo.webp" alt="WalkMeThrough screenshot" width="280"/>
 
 ## License
 
