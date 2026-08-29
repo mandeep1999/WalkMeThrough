@@ -46,6 +46,31 @@ class WalkthroughPositioningTest {
     }
 
     @Test
+    fun tooltipWiderThanOverlayDoesNotCrash() {
+        val horizontalMargin = WalkthroughPositioning.dpToPx(context, 12f)
+        val (left, _) = WalkthroughPositioning.getTooltipMargins(
+            overlayWidth = 400,
+            targetLeft = 0,
+            targetTop = 100,
+            targetWidth = 400,
+            targetHeight = 200,
+            tooltipWidth = 400,
+            tooltipHeight = 60,
+            placement = Placement.BOTTOM,
+            context = context,
+        )
+        assertEquals(0, left)
+
+        val centered = WalkthroughPositioning.coerceHorizontalMargin(
+            desiredLeft = 50,
+            contentWidth = 500,
+            containerWidth = 400,
+            horizontalMargin = horizontalMargin,
+        )
+        assertEquals(0, centered)
+    }
+
+    @Test
     fun presentationDimDefaults() {
         assertFalse(WalkthroughPositioning.resolveDimBackground(GuidePresentation.TOOLTIP, null))
         assertTrue(WalkthroughPositioning.resolveDimBackground(GuidePresentation.SPOTLIGHT, null))
