@@ -23,15 +23,31 @@ class WalkthroughPositioningTest {
             dialogHeight = 80,
             highlightHeight = 50,
             placement = Placement.TOP,
+            overlayHeight = 600,
             context = context,
         )
         assertEquals(WalkthroughPositioning.dpToPx(context, 16f), topMargin)
     }
 
     @Test
+    fun dialogTopMarginClampedToOverlay() {
+        val margin = WalkthroughPositioning.getDialogTopMargin(
+            topOverlayHeight = 50,
+            bottomOverlayHeight = 500,
+            dialogHeight = 80,
+            highlightHeight = 40,
+            placement = Placement.BOTTOM,
+            overlayHeight = 400,
+            context = context,
+        )
+        assertEquals(320, margin)
+    }
+
+    @Test
     fun tooltipBelowTarget() {
         val (left, top) = WalkthroughPositioning.getTooltipMargins(
             overlayWidth = 400,
+            overlayHeight = 800,
             targetLeft = 100,
             targetTop = 100,
             targetWidth = 48,
@@ -46,10 +62,28 @@ class WalkthroughPositioningTest {
     }
 
     @Test
+    fun tooltipVerticalPositionClampedToOverlay() {
+        val (_, top) = WalkthroughPositioning.getTooltipMargins(
+            overlayWidth = 400,
+            overlayHeight = 200,
+            targetLeft = 0,
+            targetTop = 180,
+            targetWidth = 48,
+            targetHeight = 48,
+            tooltipWidth = 120,
+            tooltipHeight = 60,
+            placement = Placement.BOTTOM,
+            context = context,
+        )
+        assertEquals(140, top)
+    }
+
+    @Test
     fun tooltipWiderThanOverlayDoesNotCrash() {
         val horizontalMargin = WalkthroughPositioning.dpToPx(context, 12f)
         val (left, _) = WalkthroughPositioning.getTooltipMargins(
             overlayWidth = 400,
+            overlayHeight = 800,
             targetLeft = 0,
             targetTop = 100,
             targetWidth = 400,

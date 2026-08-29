@@ -54,7 +54,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "com.github.mandeep1999"
                 artifactId = "WalkMeThrough"
-                version = "2.0.1"
+                version = "2.0.2"
             }
         }
     }

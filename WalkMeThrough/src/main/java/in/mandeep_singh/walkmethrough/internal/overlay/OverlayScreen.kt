@@ -72,6 +72,11 @@ internal class OverlayScreen @JvmOverloads constructor(
         LayoutParams.MATCH_PARENT,
     )
 
+    init {
+        isClickable = true
+        isFocusable = true
+    }
+
     fun show(
         parentViewGroup: ViewGroup,
         viewToHighlight: View,
@@ -108,6 +113,7 @@ internal class OverlayScreen @JvmOverloads constructor(
         removeAllViews()
         viewToHighlight = null
         onOutsideClick = null
+        setOnClickListener(null)
     }
 
     private fun applyStepConfig(
@@ -126,6 +132,15 @@ internal class OverlayScreen @JvmOverloads constructor(
         this.presentation = presentation
         removeAllViews()
         positionContent(contentView, viewToHighlight, contentPlacement, presentation)
+        configureTouchHandling(contentView)
+    }
+
+    private fun configureTouchHandling(contentView: View?) {
+        if (contentView == null) {
+            setOnClickListener { onOutsideClick?.invoke() }
+        } else {
+            setOnClickListener(null)
+        }
     }
 
     private fun positionContent(
@@ -159,6 +174,9 @@ internal class OverlayScreen @JvmOverloads constructor(
 
         contentView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
+                if (contentView.height <= 0 || width <= 0 || height <= 0 || highlightedView.height <= 0) {
+                    return
+                }
                 contentView.viewTreeObserver.removeOnGlobalLayoutListener(this)
 
                 val overlayLocation = IntArray(2)
@@ -171,6 +189,7 @@ internal class OverlayScreen @JvmOverloads constructor(
 
                 val (left, top) = WalkthroughPositioning.getTooltipMargins(
                     overlayWidth = width,
+                    overlayHeight = height,
                     targetLeft = targetLeft,
                     targetTop = targetTop,
                     targetWidth = highlightedView.width,
@@ -210,6 +229,9 @@ internal class OverlayScreen @JvmOverloads constructor(
 
         contentView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
+                if (contentView.height <= 0 || width <= 0 || height <= 0 || highlightedView.height <= 0) {
+                    return
+                }
                 contentView.viewTreeObserver.removeOnGlobalLayoutListener(this)
 
                 val overlayLocation = IntArray(2)
@@ -219,8 +241,7 @@ internal class OverlayScreen @JvmOverloads constructor(
 
                 val topOverlayHeight = viewLocation[1] - overlayLocation[1]
                 val highlightHeight = highlightedView.height
-                val bottomOverlayHeight = WalkthroughPositioning.windowHeight(context) -
-                    (topOverlayHeight + highlightHeight)
+                val bottomOverlayHeight = (height - topOverlayHeight - highlightHeight).coerceAtLeast(0)
 
                 dialogParams.topMargin = WalkthroughPositioning.getDialogTopMargin(
                     topOverlayHeight = topOverlayHeight,
@@ -228,6 +249,7 @@ internal class OverlayScreen @JvmOverloads constructor(
                     dialogHeight = contentView.height,
                     highlightHeight = highlightHeight,
                     placement = contentPlacement,
+                    overlayHeight = height,
                     context = context,
                 )
                 contentView.layoutParams = dialogParams
@@ -295,9 +317,22 @@ internal class OverlayScreen @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (event?.action == MotionEvent.ACTION_UP) {
+        if (event?.action == MotionEvent.ACTION_UP && !isTouchOnChild(event)) {
             onOutsideClick?.invoke()
         }
         return true
+    }
+
+    private fun isTouchOnChild(event: MotionEvent): Boolean {
+        val x = event.x
+        val y = event.y
+        for (index in 0 until childCount) {
+            val child = getChildAt(index)
+            if (child.visibility != View.VISIBLE) continue
+            if (x >= child.left && x <= child.right && y >= child.top && y <= child.bottom) {
+                return true
+            }
+        }
+        return false
     }
 }
