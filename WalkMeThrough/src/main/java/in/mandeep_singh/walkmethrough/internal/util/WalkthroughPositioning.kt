@@ -27,12 +27,13 @@ object WalkthroughPositioning {
         dialogHeight: Int,
         highlightHeight: Int,
         placement: Placement?,
+        overlayHeight: Int = 0,
         context: Context,
     ): Int {
         val fiftyDp = dpToPx(context, 50f)
         val sixteenDp = dpToPx(context, 16f)
 
-        return if (topOverlayHeight > bottomOverlayHeight) {
+        val margin = if (topOverlayHeight > bottomOverlayHeight) {
             when (placement) {
                 Placement.TOP -> sixteenDp
                 Placement.CENTER -> topOverlayHeight / 2 - dialogHeight / 2
@@ -47,6 +48,11 @@ object WalkthroughPositioning {
                 else -> topOverlayHeight + highlightHeight + (bottomOverlayHeight / 2) - dialogHeight / 2
             }
         }
+
+        if (overlayHeight <= 0 || dialogHeight <= 0) {
+            return margin
+        }
+        return margin.coerceIn(0, (overlayHeight - dialogHeight).coerceAtLeast(0))
     }
 
     fun statusBarHeight(context: Context): Int {
@@ -63,9 +69,11 @@ object WalkthroughPositioning {
 
     /**
      * Computes [leftMargin, topMargin] for a tooltip bubble anchored near a highlighted target.
+     * All target coordinates must be relative to the overlay, not the screen.
      */
     fun getTooltipMargins(
         overlayWidth: Int,
+        overlayHeight: Int,
         targetLeft: Int,
         targetTop: Int,
         targetWidth: Int,
@@ -78,11 +86,12 @@ object WalkthroughPositioning {
         val gap = dpToPx(context, 8f)
         val horizontalMargin = dpToPx(context, 12f)
 
-        val resolvedPlacement = placement ?: if (targetTop > windowHeight(context) / 2) {
-            Placement.TOP
-        } else {
-            Placement.BOTTOM
-        }
+        val resolvedPlacement = placement ?: resolveTooltipPlacement(
+            targetTop = targetTop,
+            targetHeight = targetHeight,
+            overlayHeight = overlayHeight,
+            context = context,
+        )
 
         val targetCenterX = targetLeft + targetWidth / 2
         var left = targetCenterX - tooltipWidth / 2
@@ -93,13 +102,38 @@ object WalkthroughPositioning {
             horizontalMargin = horizontalMargin,
         )
 
-        val top = when (resolvedPlacement) {
+        val rawTop = when (resolvedPlacement) {
             Placement.TOP -> targetTop - tooltipHeight - gap
             Placement.BOTTOM -> targetTop + targetHeight + gap
             Placement.CENTER -> targetTop + targetHeight / 2 - tooltipHeight / 2
         }
 
+        val top = if (overlayHeight > 0 && tooltipHeight > 0) {
+            rawTop.coerceIn(0, (overlayHeight - tooltipHeight).coerceAtLeast(0))
+        } else {
+            rawTop
+        }
+
         return left to top
+    }
+
+    private fun resolveTooltipPlacement(
+        targetTop: Int,
+        targetHeight: Int,
+        overlayHeight: Int,
+        context: Context,
+    ): Placement {
+        return if (overlayHeight > 0) {
+            if (targetTop + targetHeight / 2 > overlayHeight / 2) {
+                Placement.TOP
+            } else {
+                Placement.BOTTOM
+            }
+        } else if (targetTop > windowHeight(context) / 2) {
+            Placement.TOP
+        } else {
+            Placement.BOTTOM
+        }
     }
 
     /**
