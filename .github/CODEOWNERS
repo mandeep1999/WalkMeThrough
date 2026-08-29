@@ -1,4 +1,4 @@
-# Require @mandeep1999 review on every pull request that changes these paths.
-# Note: GitHub does not auto-request review from the PR author, even if they are
-# a code owner. See .github/workflows/request-owner-review.yml for explicit requests.
+# Require @mandeep1999 review on pull requests from other contributors.
+# Your own PRs skip the review request (see request-owner-review.yml).
+# Branch protection should require code owner review + allow you to bypass as admin.
 * @mandeep1999

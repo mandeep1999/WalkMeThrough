@@ -17,7 +17,11 @@ jobs:
             const reviewer = 'mandeep1999';
             const pr = context.payload.pull_request;
 
-            // CODEOWNERS does not request review from the PR author — add explicitly.
+            // Owner PRs: no review request — you can merge your own work without self-approval.
+            if (pr.user.login === reviewer) {
+              return;
+            }
+
             const { data: existing } = await github.rest.pulls.listRequestedReviewers({
               owner: context.repo.owner,
               repo: context.repo.repo,
