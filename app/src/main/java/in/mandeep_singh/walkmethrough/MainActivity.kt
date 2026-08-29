@@ -1,7 +1,5 @@
 package `in`.mandeep_singh.walkmethrough
 
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity

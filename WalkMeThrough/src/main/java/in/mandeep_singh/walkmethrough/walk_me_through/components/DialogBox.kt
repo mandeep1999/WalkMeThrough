@@ -8,8 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
-import `in`.mandeep_singh.walkmethrough.R
-import `in`.mandeep_singh.walkmethrough.databinding.LayoutDialogBoxBinding
+import `in`.mandeep_singh.walkmethrough.library.R
+import `in`.mandeep_singh.walkmethrough.library.databinding.LayoutDialogBoxBinding
 import `in`.mandeep_singh.walkmethrough.walk_me_through.data.models.DialogModel
 import `in`.mandeep_singh.walkmethrough.walk_me_through.data.models.PaddingModel
 import `in`.mandeep_singh.walkmethrough.walk_me_through.utils.Utility.toDp

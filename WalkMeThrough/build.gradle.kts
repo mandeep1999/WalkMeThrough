@@ -1,25 +1,21 @@
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("maven-publish")
 }
 
 android {
-    namespace = "in.mandeep_singh.walkmethrough"
+    namespace = "in.mandeep_singh.walkmethrough.library"
     compileSdk = 34
 
-
-    dataBinding {
-        enable = true
+    defaultConfig {
+        minSdk = 24
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
-    defaultConfig {
-        applicationId = "in.mandeep_singh.walkmethrough"
-        minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    buildFeatures {
+        dataBinding = true
     }
 
     buildTypes {
@@ -41,13 +37,25 @@ android {
 }
 
 dependencies {
-    implementation(project(":WalkMeThrough"))
-
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("com.google.code.gson:gson:2.11.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
+                groupId = "com.github.mandeep1999"
+                artifactId = "WalkMeThrough"
+                version = "1.0.1"
+            }
+        }
+    }
 }

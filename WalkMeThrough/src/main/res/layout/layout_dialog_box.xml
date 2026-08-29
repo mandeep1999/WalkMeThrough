@@ -71,7 +71,8 @@
                 android:layout_width="12dp"
                 android:layout_height="1dp" />
 
-            <androidx.appcompat.widget.AppCompatButton                android:id="@+id/next_button"
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/next_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

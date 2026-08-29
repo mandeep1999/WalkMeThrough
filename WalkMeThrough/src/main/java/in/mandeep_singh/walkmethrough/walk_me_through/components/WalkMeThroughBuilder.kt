@@ -294,7 +294,7 @@ class WalkthroughBuilder(private val context: Context) {
      * @throws IllegalArgumentException if `viewToHighlight` or `parentViewGroup` are not set.
      * @return The constructed `OverlayScreen` instance.
      */
-    internal fun build(): OverlayScreen {
+    fun build() {
         // Ensure required parameters are set
         if (viewToHighlight == null) {
             throw IllegalArgumentException("View to highlight must be provided")
@@ -325,9 +325,7 @@ class WalkthroughBuilder(private val context: Context) {
             .setOnCloseClick(dialogModel.onCloseClick)
             .build()
 
-        // Create OverlayScreen using OverlayScreenBuilder
-
-        return OverlayScreen.OverlayScreenBuilder(context)
+        OverlayScreen.OverlayScreenBuilder(context)
             .setViewToHighlight(viewToHighlight!!)
             .setParentViewGroup(parentViewGroup!!)
             .setDialogBox(dialogBox)

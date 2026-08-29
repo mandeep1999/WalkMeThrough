@@ -105,7 +105,7 @@ internal class OverlayScreen @JvmOverloads constructor(
         dialogBox.viewTreeObserver?.addOnGlobalLayoutListener(object :
             ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                rootView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                dialogBox.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 val infoDialogHeight = dialogBox.height
 
                 val centerY = getPositionOfDialog(

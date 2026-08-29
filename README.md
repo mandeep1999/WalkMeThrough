@@ -115,8 +115,8 @@ The WalkthroughBuilder class allows you to configure the following:
 - `setOnBackClick(listener: () -> Unit)`: Callback for when the "Back" button is clicked.
 - `setOnNextClick(listener: () -> Unit)`: Callback for when the "Next" button is clicked.
 - `setDialogPosition(position: Position)`: Position of the dialog relative to the highlighted view.
-setOnOutsideClickListener(listener: () -> Unit): Callback for clicks outside the dialog.
-setOnCloseClick(listener: () -> Unit): Callback for the close button click.
+- `setOnOutsideClickListener(listener: () -> Unit)`: Callback for clicks outside the dialog.
+- `setOnCloseClick(listener: () -> Unit)`: Callback for the close button click.
 
 ### 4. Screenshots
 
