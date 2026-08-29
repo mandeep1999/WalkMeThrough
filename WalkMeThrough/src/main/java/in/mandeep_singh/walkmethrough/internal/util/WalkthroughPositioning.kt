@@ -86,7 +86,12 @@ object WalkthroughPositioning {
 
         val targetCenterX = targetLeft + targetWidth / 2
         var left = targetCenterX - tooltipWidth / 2
-        left = left.coerceIn(horizontalMargin, overlayWidth - tooltipWidth - horizontalMargin)
+        left = coerceHorizontalMargin(
+            desiredLeft = left,
+            contentWidth = tooltipWidth,
+            containerWidth = overlayWidth,
+            horizontalMargin = horizontalMargin,
+        )
 
         val top = when (resolvedPlacement) {
             Placement.TOP -> targetTop - tooltipHeight - gap
@@ -95,6 +100,27 @@ object WalkthroughPositioning {
         }
 
         return left to top
+    }
+
+    /**
+     * Clamps horizontal offset when content is wider than the padded container width.
+     */
+    internal fun coerceHorizontalMargin(
+        desiredLeft: Int,
+        contentWidth: Int,
+        containerWidth: Int,
+        horizontalMargin: Int,
+    ): Int {
+        if (containerWidth <= 0) return 0
+
+        val minLeft = horizontalMargin
+        val maxLeft = containerWidth - contentWidth - horizontalMargin
+
+        return when {
+            contentWidth >= containerWidth -> maxOf(0, (containerWidth - contentWidth) / 2)
+            maxLeft < minLeft -> desiredLeft.coerceIn(0, containerWidth - contentWidth)
+            else -> desiredLeft.coerceIn(minLeft, maxLeft)
+        }
     }
 
     fun resolveDimBackground(presentation: GuidePresentation, dimBackground: Boolean?): Boolean {
