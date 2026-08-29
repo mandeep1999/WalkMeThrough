@@ -20,7 +20,7 @@ dependencyResolutionManagement {
 
 ```gradle
 dependencies {
-    implementation 'com.github.mandeep1999:WalkMeThrough:v1.0.1'
+    implementation 'com.github.mandeep1999:WalkMeThrough:2.0.0'
 }
 ```
 
