@@ -156,10 +156,12 @@ Walkthrough.with(this)
 | `FULL_SCREEN` | yes | no | no |
 
 ## Screenshots
-<img width="1080" height="2400" alt="Screenshot_20260829_154934" src="https://github.com/user-attachments/assets/43ff34b2-f6af-4afe-9ef7-2b2bf4c96511" />
-<img width="1080" height="2400" alt="Screenshot_20260829_155038" src="https://github.com/user-attachments/assets/7076fea7-510a-4913-b37d-3d938dee0be6" />
 
-<img src="docs/screenshots/walkthrough-demo.webp" alt="WalkMeThrough screenshot" width="280"/>
+<p align="center">
+  <img src="docs/screenshots/screenshot-154934.webp" alt="Walkthrough card step" width="180" height="400"/>
+  <img src="docs/screenshots/screenshot-155038.webp" alt="Walkthrough tooltip step" width="180" height="400"/>
+  <img src="docs/screenshots/walkthrough-demo.webp" alt="Walkthrough mixed presentations" width="180" height="252"/>
+</p>
 
 ## License
 
