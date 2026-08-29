@@ -1,4 +1,5 @@
 name: Request owner review
+# Validates reviewer requests for non-owner PR authors (see test/cursor-reviewer-workflow).
 
 on:
   pull_request:
