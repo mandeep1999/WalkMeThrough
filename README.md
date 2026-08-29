@@ -2,7 +2,7 @@
 
 # WalkMeThrough
 
-**WalkMeThrough** is an Android library that guides users through your app by highlighting specific views and showing instructional dialogs.
+**WalkMeThrough** is an Android library that guides users through your app by highlighting specific views and showing instructional UI.
 
 ## Add dependency
 
@@ -24,20 +24,20 @@ dependencies {
 }
 ```
 
-## Multi-step walkthrough (recommended)
+## Guided walkthrough (recommended)
 
 ```kotlin
 import `in`.mandeep_singh.walkmethrough.Position
 import `in`.mandeep_singh.walkmethrough.Walkthrough
 
 Walkthrough.from(this)
-    .step(findViewById(R.id.profile_icon)) {
+    .card(findViewById(R.id.profile_icon)) {
         titleText = "Profile"
         descriptionText = "Open your profile from here."
         nextButtonText = "Next"
-        dialogPosition = Position.CENTER
+        placement = Position.CENTER
     }
-    .step(findViewById(R.id.settings_icon)) {
+    .card(findViewById(R.id.settings_icon)) {
         titleText = "Settings"
         descriptionText = "Adjust preferences anytime."
         backButtonText = "Back"
@@ -50,49 +50,47 @@ Walkthrough.from(this)
 
 The overlay attaches to the activity content root automatically. Override with `setOverlayParent(viewGroup)` if needed.
 
-## Tooltip steps
+## Tooltip guide steps
 
-Use lightweight tooltip bubbles for quick hints without a full dialog card:
+Use compact tooltip bubbles for quick hints:
 
 ```kotlin
 Walkthrough.from(this)
-    .tooltipStep(findViewById(R.id.search_icon)) {
+    .tooltip(findViewById(R.id.search_icon)) {
         titleText = "Search"
         descriptionText = "Find anything in the app."
-        dialogPosition = Position.BOTTOM
+        placement = Position.BOTTOM
     }
-    .tooltipStep(findViewById(R.id.filter_icon)) {
+    .tooltip(findViewById(R.id.filter_icon)) {
         titleText = "Filters"
-        dialogPosition = Position.TOP
+        placement = Position.TOP
     }
     .onComplete { /* finished */ }
     .show()
 ```
 
-Tooltip defaults: no dimmed background, no target cutout, tap outside advances to the next step. Override per step:
+Tooltip defaults: no dimmed background, no target cutout, tap outside advances. Override per step:
 
 ```kotlin
-.tooltipStep(target) {
+.tooltip(target) {
     dimBackground = true
     highlightTarget = true
     advanceOnOutsideTap = false
 }
 ```
 
-Mix dialog and tooltip steps in one session:
+Mix cards and tooltips in one guide:
 
 ```kotlin
 Walkthrough.from(this)
-    .step(profileView) { titleText = "Welcome"; nextButtonText = "Next" }
-    .tooltipStep(searchView) { titleText = "Quick search tip" }
+    .card(profileView) { titleText = "Welcome"; nextButtonText = "Next" }
+    .tooltip(searchView) { titleText = "Quick search tip" }
     .show()
 ```
 
-Custom tooltip UI via `setTooltipContent(...)`.
-
 ## Single-step API (legacy)
 
-`WalkthroughBuilder` remains available for one-off highlights:
+`WalkthroughBuilder` remains available for one-off card steps:
 
 ```kotlin
 import `in`.mandeep_singh.walkmethrough.walk_me_through.components.WalkthroughBuilder
@@ -110,24 +108,21 @@ WalkthroughBuilder(this)
 
 `setParentViewGroup(...)` is optional; when omitted, the library uses the activity content root.
 
-## Custom dialog UI
+## Custom UI
 
-Provide your own dialog layout via `WalkthroughDialogContent`:
+- Card steps: `setDialogContent(...)` with `WalkthroughDialogContent`
+- Tooltip steps: `setTooltipContent(...)` with `WalkthroughTooltipContent`
 
-```kotlin
-Walkthrough.from(this)
-    .setDialogContent(myCustomDialogContent)
-    .step(targetView) { titleText = "..." }
-    .show()
-```
+## API overview
 
-## Configuration highlights
-
-- `step(targetView) { ... }` — add a step with optional styling fields
-- `onStepShown`, `onComplete`, `onDismiss`, `onOutsideClick` — session callbacks
-- `show()` returns a `WalkthroughCoordinator` for manual `dismiss()`
-- Per-step fields include title, description, button text/colors/backgrounds, `dialogPosition`, `dialogPadding`, `StepStyle`, `dimBackground`, `highlightTarget`, and `advanceOnOutsideTap`
-- `tooltipStep(...)` — shorthand for compact tooltip bubbles
+| Method / type | Purpose |
+|---------------|---------|
+| `card(target) { ... }` | Card step with optional back/next buttons |
+| `tooltip(target) { ... }` | Anchored tooltip bubble |
+| `add(GuideStep)` | Add a pre-built guide step |
+| `placement` | `Position.TOP`, `CENTER`, or `BOTTOM` relative to target |
+| `onStepShown`, `onComplete`, `onDismiss`, `onOutsideClick` | Session callbacks |
+| `show()` | Returns `WalkthroughCoordinator` for manual `dismiss()` |
 
 ## Screenshots
 

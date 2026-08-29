@@ -2,9 +2,9 @@ package `in`.mandeep_singh.walkmethrough.internal.dialog
 
 import android.content.Context
 import android.view.View
+import `in`.mandeep_singh.walkmethrough.GuideStep
 import `in`.mandeep_singh.walkmethrough.WalkthroughActions
 import `in`.mandeep_singh.walkmethrough.WalkthroughDialogContent
-import `in`.mandeep_singh.walkmethrough.WalkthroughStep
 
 internal class LegacyCallbackDialogContent(
     private val onBack: (() -> Unit)?,
@@ -14,7 +14,7 @@ internal class LegacyCallbackDialogContent(
 
     override fun createView(
         context: Context,
-        step: WalkthroughStep,
+        guideStep: GuideStep,
         stepIndex: Int,
         totalSteps: Int,
         actions: WalkthroughActions,
@@ -39,6 +39,6 @@ internal class LegacyCallbackDialogContent(
                 actions.onOutsideClick()
             }
         }
-        return DefaultDialogView.create(context, step, stepIndex, totalSteps, wrappedActions)
+        return DefaultDialogView.create(context, guideStep, stepIndex, totalSteps, wrappedActions)
     }
 }

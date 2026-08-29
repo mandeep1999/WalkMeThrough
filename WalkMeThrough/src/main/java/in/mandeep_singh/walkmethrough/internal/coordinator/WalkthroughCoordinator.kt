@@ -5,10 +5,10 @@ import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import `in`.mandeep_singh.walkmethrough.StepStyle
+import `in`.mandeep_singh.walkmethrough.GuidePresentation
+import `in`.mandeep_singh.walkmethrough.GuideStep
 import `in`.mandeep_singh.walkmethrough.WalkthroughActions
 import `in`.mandeep_singh.walkmethrough.WalkthroughDialogContent
-import `in`.mandeep_singh.walkmethrough.WalkthroughStep
 import `in`.mandeep_singh.walkmethrough.WalkthroughTooltipContent
 import `in`.mandeep_singh.walkmethrough.internal.dialog.DefaultWalkthroughDialogContent
 import `in`.mandeep_singh.walkmethrough.internal.overlay.OverlayScreen
@@ -17,7 +17,7 @@ import `in`.mandeep_singh.walkmethrough.internal.util.WalkthroughPositioning
 
 class WalkthroughCoordinator internal constructor(
     private val activity: Activity,
-    private val steps: List<WalkthroughStep>,
+    private val guideSteps: List<GuideStep>,
     private val overlayParent: ViewGroup?,
     private val dialogContent: WalkthroughDialogContent?,
     private val tooltipContent: WalkthroughTooltipContent?,
@@ -37,7 +37,7 @@ class WalkthroughCoordinator internal constructor(
         if (activity is ComponentActivity) {
             activity.lifecycle.addObserver(this)
         }
-        showStep(0)
+        showGuideStep(0)
     }
 
     fun dismiss() {
@@ -59,13 +59,13 @@ class WalkthroughCoordinator internal constructor(
 
     override fun onBack() {
         if (currentStepIndex > 0) {
-            showStep(currentStepIndex - 1)
+            showGuideStep(currentStepIndex - 1)
         }
     }
 
     override fun onNext() {
-        if (currentStepIndex < steps.lastIndex) {
-            showStep(currentStepIndex + 1)
+        if (currentStepIndex < guideSteps.lastIndex) {
+            showGuideStep(currentStepIndex + 1)
         } else {
             onComplete?.invoke()
             dismiss()
@@ -77,40 +77,46 @@ class WalkthroughCoordinator internal constructor(
     }
 
     override fun onOutsideClick() {
-        val step = steps[currentStepIndex]
+        val guideStep = guideSteps[currentStepIndex]
         onOutsideClick?.invoke()
-        if (step.advanceOnOutsideTap) {
+        if (guideStep.advanceOnOutsideTap) {
             onNext()
         }
     }
 
-    private fun showStep(index: Int) {
+    private fun showGuideStep(index: Int) {
         currentStepIndex = index
-        val step = steps[index]
+        val guideStep = guideSteps[index]
         val parent = overlayParent ?: activityOverlayParent()
-        val contentView = createContentView(step, index)
-        val dimBackground = WalkthroughPositioning.resolveDimBackground(step.style, step.dimBackground)
-        val highlightTarget = WalkthroughPositioning.resolveHighlightTarget(step.highlightTarget)
+        val contentView = createContentView(guideStep, index)
+        val dimBackground = WalkthroughPositioning.resolveDimBackground(
+            guideStep.presentation,
+            guideStep.dimBackground,
+        )
+        val highlightTarget = WalkthroughPositioning.resolveHighlightTarget(
+            guideStep.presentation,
+            guideStep.highlightTarget,
+        )
 
         val overlayScreen = overlay ?: OverlayScreen(activity).also { overlay = it }
 
         if (overlayScreen.parent == null) {
             overlayScreen.show(
                 parentViewGroup = parent,
-                viewToHighlight = step.targetView,
+                viewToHighlight = guideStep.targetView,
                 contentView = contentView,
-                contentPosition = step.dialogPosition,
-                contentStyle = step.style,
+                contentPosition = guideStep.placement,
+                presentation = guideStep.presentation,
                 dimBackground = dimBackground,
                 highlightTarget = highlightTarget,
                 onOutsideClick = ::onOutsideClick,
             )
         } else {
             overlayScreen.updateStep(
-                viewToHighlight = step.targetView,
+                viewToHighlight = guideStep.targetView,
                 contentView = contentView,
-                contentPosition = step.dialogPosition,
-                contentStyle = step.style,
+                contentPosition = guideStep.placement,
+                presentation = guideStep.presentation,
                 dimBackground = dimBackground,
                 highlightTarget = highlightTarget,
                 onOutsideClick = ::onOutsideClick,
@@ -120,23 +126,23 @@ class WalkthroughCoordinator internal constructor(
         onStepShown?.invoke(index)
     }
 
-    private fun createContentView(step: WalkthroughStep, index: Int): android.view.View {
-        return if (step.style == StepStyle.TOOLTIP) {
+    private fun createContentView(guideStep: GuideStep, index: Int): android.view.View {
+        return if (guideStep.presentation == GuidePresentation.TOOLTIP) {
             val content = tooltipContent ?: DefaultWalkthroughTooltipContent()
             content.createView(
                 context = activity,
-                step = step,
+                guideStep = guideStep,
                 stepIndex = index,
-                totalSteps = steps.size,
+                totalSteps = guideSteps.size,
                 actions = this,
             )
         } else {
             val content = dialogContent ?: DefaultWalkthroughDialogContent()
             content.createView(
                 context = activity,
-                step = step,
+                guideStep = guideStep,
                 stepIndex = index,
-                totalSteps = steps.size,
+                totalSteps = guideSteps.size,
                 actions = this,
             )
         }

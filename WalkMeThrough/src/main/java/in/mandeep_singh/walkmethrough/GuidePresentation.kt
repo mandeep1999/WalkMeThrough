@@ -1,11 +1,11 @@
 package `in`.mandeep_singh.walkmethrough
 
 /**
- * How a walkthrough step is presented on screen.
+ * How a guide step is presented on screen.
  */
-enum class StepStyle {
+enum class GuidePresentation {
     /** Full instructional card with optional navigation buttons. */
-    DIALOG,
+    CARD,
 
     /** Compact tooltip bubble anchored near the highlighted target. */
     TOOLTIP,

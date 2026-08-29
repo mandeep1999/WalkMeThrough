@@ -1,17 +1,16 @@
 package `in`.mandeep_singh.walkmethrough
 
-import android.content.Context
 import android.view.View
 
 /**
- * Pluggable dialog UI for a walkthrough step. Supply a custom implementation to replace the default card.
+ * Pluggable card UI for card-style guide steps. Use with [WalkthroughSession.setDialogContent].
  */
 interface WalkthroughDialogContent {
-  fun createView(
-      context: Context,
-      step: WalkthroughStep,
-      stepIndex: Int,
-      totalSteps: Int,
-      actions: WalkthroughActions,
-  ): View
+    fun createView(
+        context: android.content.Context,
+        guideStep: GuideStep,
+        stepIndex: Int,
+        totalSteps: Int,
+        actions: WalkthroughActions,
+    ): View
 }

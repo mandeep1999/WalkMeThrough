@@ -4,11 +4,11 @@ import android.graphics.drawable.Drawable
 import android.view.View
 
 /**
- * Configuration for a single walkthrough step.
+ * Configuration for a single step in a guided walkthrough.
  */
-data class WalkthroughStep(
+data class GuideStep(
     val targetView: View,
-    val style: StepStyle = StepStyle.DIALOG,
+    val presentation: GuidePresentation = GuidePresentation.CARD,
     val titleText: String? = null,
     val descriptionText: String? = null,
     val backButtonText: String? = null,
@@ -24,22 +24,20 @@ data class WalkthroughStep(
     val nextButtonBackground: Drawable? = null,
     val backButtonBackground: Drawable? = null,
     val dialogPadding: Padding? = null,
-    val dialogPosition: Position? = null,
-    /** When null, defaults to true for [StepStyle.DIALOG] and false for [StepStyle.TOOLTIP]. */
+    /** Preferred placement relative to the highlighted target. */
+    val placement: Position? = null,
+    /** When null, defaults to true for [GuidePresentation.CARD] and false for [GuidePresentation.TOOLTIP]. */
     val dimBackground: Boolean? = null,
-    /** When null, defaults to true. */
+    /** When null, defaults to true for cards and false for tooltips. */
     val highlightTarget: Boolean? = null,
-    /** Whether the tooltip arrow is shown (tooltip style only). */
-    val showTooltipArrow: Boolean = true,
-    /** Tooltip steps advance to the next step when the user taps outside the bubble. */
+    val showArrow: Boolean = true,
     val advanceOnOutsideTap: Boolean = false,
 )
 
 /**
- * Fluent builder for [WalkthroughStep].
+ * Fluent builder for a card-style guide step.
  */
-class WalkthroughStepBuilder(private val targetView: View) {
-    var style: StepStyle = StepStyle.DIALOG
+class CardStepBuilder(private val targetView: View) {
     var titleText: String? = null
     var descriptionText: String? = null
     var backButtonText: String? = null
@@ -55,15 +53,14 @@ class WalkthroughStepBuilder(private val targetView: View) {
     var nextButtonBackground: Drawable? = null
     var backButtonBackground: Drawable? = null
     var dialogPadding: Padding? = null
-    var dialogPosition: Position? = null
+    var placement: Position? = null
     var dimBackground: Boolean? = null
     var highlightTarget: Boolean? = null
-    var showTooltipArrow: Boolean = true
     var advanceOnOutsideTap: Boolean = false
 
-    fun build(): WalkthroughStep = WalkthroughStep(
+    fun build(): GuideStep = GuideStep(
         targetView = targetView,
-        style = style,
+        presentation = GuidePresentation.CARD,
         titleText = titleText,
         descriptionText = descriptionText,
         backButtonText = backButtonText,
@@ -79,10 +76,44 @@ class WalkthroughStepBuilder(private val targetView: View) {
         nextButtonBackground = nextButtonBackground,
         backButtonBackground = backButtonBackground,
         dialogPadding = dialogPadding,
-        dialogPosition = dialogPosition,
+        placement = placement,
         dimBackground = dimBackground,
         highlightTarget = highlightTarget,
-        showTooltipArrow = showTooltipArrow,
+        advanceOnOutsideTap = advanceOnOutsideTap,
+    )
+}
+
+/**
+ * Fluent builder for a tooltip-style guide step.
+ */
+class TooltipStepBuilder(private val targetView: View) {
+    var titleText: String? = null
+    var descriptionText: String? = null
+    var titleTextColor: Int? = null
+    var descriptionTextColor: Int? = null
+    var dialogBackgroundColor: Int? = null
+    var dialogBackground: Drawable? = null
+    var dialogPadding: Padding? = null
+    var placement: Position? = null
+    var dimBackground: Boolean? = false
+    var highlightTarget: Boolean? = false
+    var showArrow: Boolean = true
+    var advanceOnOutsideTap: Boolean = true
+
+    fun build(): GuideStep = GuideStep(
+        targetView = targetView,
+        presentation = GuidePresentation.TOOLTIP,
+        titleText = titleText,
+        descriptionText = descriptionText,
+        titleTextColor = titleTextColor,
+        descriptionTextColor = descriptionTextColor,
+        dialogBackgroundColor = dialogBackgroundColor,
+        dialogBackground = dialogBackground,
+        dialogPadding = dialogPadding,
+        placement = placement,
+        dimBackground = dimBackground,
+        highlightTarget = highlightTarget,
+        showArrow = showArrow,
         advanceOnOutsideTap = advanceOnOutsideTap,
     )
 }

@@ -6,11 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 
 /**
- * Configures a multi-step walkthrough and displays it on an activity.
+ * Configures a guided walkthrough and displays it on an activity.
  */
 class WalkthroughSession internal constructor(private val activity: Activity) {
 
-    private val steps = mutableListOf<WalkthroughStep>()
+    private val guideSteps = mutableListOf<GuideStep>()
     private var onStepShown: ((Int) -> Unit)? = null
     private var onComplete: (() -> Unit)? = null
     private var onDismiss: (() -> Unit)? = null
@@ -19,26 +19,24 @@ class WalkthroughSession internal constructor(private val activity: Activity) {
     private var tooltipContent: WalkthroughTooltipContent? = null
     private var overlayParent: ViewGroup? = null
 
-    fun addStep(step: WalkthroughStep) = apply { steps.add(step) }
+    fun add(guideStep: GuideStep) = apply { guideSteps.add(guideStep) }
 
-    fun step(targetView: View, configure: WalkthroughStepBuilder.() -> Unit = {}) = apply {
-        val builder = WalkthroughStepBuilder(targetView)
+    /**
+     * Adds a card-style step with title, description, and optional navigation buttons.
+     */
+    fun card(targetView: View, configure: CardStepBuilder.() -> Unit = {}) = apply {
+        val builder = CardStepBuilder(targetView)
         builder.configure()
-        steps.add(builder.build())
+        guideSteps.add(builder.build())
     }
 
     /**
      * Adds a compact tooltip step anchored near [targetView].
      */
-    fun tooltipStep(targetView: View, configure: WalkthroughStepBuilder.() -> Unit = {}) = apply {
-        val builder = WalkthroughStepBuilder(targetView).apply {
-            style = StepStyle.TOOLTIP
-            dimBackground = false
-            highlightTarget = false
-            advanceOnOutsideTap = true
-        }
+    fun tooltip(targetView: View, configure: TooltipStepBuilder.() -> Unit = {}) = apply {
+        val builder = TooltipStepBuilder(targetView)
         builder.configure()
-        steps.add(builder.build())
+        guideSteps.add(builder.build())
     }
 
     fun onStepShown(listener: (Int) -> Unit) = apply { onStepShown = listener }
@@ -58,15 +56,12 @@ class WalkthroughSession internal constructor(private val activity: Activity) {
      */
     fun setOverlayParent(viewGroup: ViewGroup) = apply { overlayParent = viewGroup }
 
-    /**
-     * Starts the walkthrough and returns the coordinator for manual dismissal if needed.
-     */
     fun show(): WalkthroughCoordinator {
-        require(steps.isNotEmpty()) { "At least one walkthrough step must be added before calling show()" }
+        require(guideSteps.isNotEmpty()) { "Add at least one guide step with card() or tooltip() before calling show()" }
 
         val coordinator = WalkthroughCoordinator(
             activity = activity,
-            steps = steps.toList(),
+            guideSteps = guideSteps.toList(),
             overlayParent = overlayParent,
             dialogContent = dialogContent,
             tooltipContent = tooltipContent,

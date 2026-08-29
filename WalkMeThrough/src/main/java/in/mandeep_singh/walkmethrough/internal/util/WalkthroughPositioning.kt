@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Rect
 import android.util.TypedValue
+import `in`.mandeep_singh.walkmethrough.GuidePresentation
 import `in`.mandeep_singh.walkmethrough.Position
-import `in`.mandeep_singh.walkmethrough.StepStyle
 
 object WalkthroughPositioning {
 
@@ -97,9 +97,14 @@ object WalkthroughPositioning {
         return left to top
     }
 
-    fun resolveDimBackground(stepStyle: StepStyle, dimBackground: Boolean?): Boolean {
-        return dimBackground ?: (stepStyle == StepStyle.DIALOG)
+    fun resolveDimBackground(presentation: GuidePresentation, dimBackground: Boolean?): Boolean {
+        return dimBackground ?: (presentation == GuidePresentation.CARD)
     }
 
-    fun resolveHighlightTarget(highlightTarget: Boolean?): Boolean = highlightTarget ?: true
+    fun resolveHighlightTarget(
+        presentation: GuidePresentation,
+        highlightTarget: Boolean?,
+    ): Boolean {
+        return highlightTarget ?: (presentation == GuidePresentation.CARD)
+    }
 }

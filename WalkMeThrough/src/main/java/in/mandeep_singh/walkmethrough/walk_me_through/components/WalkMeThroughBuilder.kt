@@ -5,14 +5,15 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
+import `in`.mandeep_singh.walkmethrough.GuideStep
+import `in`.mandeep_singh.walkmethrough.GuidePresentation
 import `in`.mandeep_singh.walkmethrough.Walkthrough
-import `in`.mandeep_singh.walkmethrough.WalkthroughStep
 import `in`.mandeep_singh.walkmethrough.internal.dialog.LegacyCallbackDialogContent
 import `in`.mandeep_singh.walkmethrough.walk_me_through.data.enums.Position
 import `in`.mandeep_singh.walkmethrough.walk_me_through.data.models.PaddingModel
 
 /**
- * Fluent builder for a single-step walkthrough. For multiple steps, use [Walkthrough.from].
+ * Fluent builder for a single card-style guide step. For multiple steps, use [Walkthrough.from].
  */
 class WalkthroughBuilder(private val context: Context) {
 
@@ -33,7 +34,7 @@ class WalkthroughBuilder(private val context: Context) {
     private var nextButtonBackground: Drawable? = null
     private var backButtonBackground: Drawable? = null
     private var dialogPadding: PaddingModel? = null
-    private var dialogPosition: Position? = null
+    private var placement: Position? = null
     private var onOutsideClick: (() -> Unit)? = null
     private var onBackClick: (() -> Unit)? = null
     private var onNextClick: (() -> Unit)? = null
@@ -44,7 +45,7 @@ class WalkthroughBuilder(private val context: Context) {
     /** Optional overlay parent. When omitted, the activity content root is used. */
     fun setParentViewGroup(viewGroup: ViewGroup) = apply { parentViewGroup = viewGroup }
 
-    fun setDialogPosition(position: Position) = apply { dialogPosition = position }
+    fun setDialogPosition(position: Position) = apply { placement = position }
 
     fun setOnOutsideClickListener(listener: () -> Unit) = apply { onOutsideClick = listener }
 
@@ -91,8 +92,9 @@ class WalkthroughBuilder(private val context: Context) {
         val target = viewToHighlight
             ?: throw IllegalArgumentException("View to highlight must be provided")
 
-        val step = WalkthroughStep(
+        val guideStep = GuideStep(
             targetView = target,
+            presentation = GuidePresentation.CARD,
             titleText = titleText,
             descriptionText = descriptionText,
             backButtonText = backButtonText,
@@ -108,11 +110,11 @@ class WalkthroughBuilder(private val context: Context) {
             nextButtonBackground = nextButtonBackground,
             backButtonBackground = backButtonBackground,
             dialogPadding = dialogPadding,
-            dialogPosition = dialogPosition,
+            placement = placement,
         )
 
         val session = Walkthrough.from(activity)
-            .addStep(step)
+            .add(guideStep)
             .onOutsideClick { onOutsideClick?.invoke() }
             .setDialogContent(
                 LegacyCallbackDialogContent(

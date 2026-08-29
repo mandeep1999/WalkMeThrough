@@ -5,10 +5,10 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.view.isVisible
+import `in`.mandeep_singh.walkmethrough.GuideStep
 import `in`.mandeep_singh.walkmethrough.Padding
 import `in`.mandeep_singh.walkmethrough.WalkthroughActions
 import `in`.mandeep_singh.walkmethrough.WalkthroughDialogContent
-import `in`.mandeep_singh.walkmethrough.WalkthroughStep
 import `in`.mandeep_singh.walkmethrough.library.databinding.LayoutDialogBoxBinding
 import `in`.mandeep_singh.walkmethrough.internal.util.WalkthroughPositioning
 
@@ -16,46 +16,45 @@ internal object DefaultDialogView {
 
     fun create(
         context: Context,
-        step: WalkthroughStep,
+        guideStep: GuideStep,
         stepIndex: Int,
         totalSteps: Int,
         actions: WalkthroughActions,
     ): View {
         val binding = LayoutDialogBoxBinding.inflate(LayoutInflater.from(context))
-        bind(binding, step, stepIndex, totalSteps, actions)
+        bind(binding, guideStep, stepIndex, actions)
         return binding.root
     }
 
     private fun bind(
         binding: LayoutDialogBoxBinding,
-        step: WalkthroughStep,
+        guideStep: GuideStep,
         stepIndex: Int,
-        totalSteps: Int,
         actions: WalkthroughActions,
     ) {
         val context = binding.root.context
         val showBack = stepIndex > 0
 
-        setUpTitleTextView(binding, step.titleText, step.titleTextColor)
-        setUpDescriptionTextView(binding, step.descriptionText, step.descriptionTextColor)
-        setUpBackground(binding, step.dialogBackground, step.dialogBackgroundColor)
+        setUpTitleTextView(binding, guideStep.titleText, guideStep.titleTextColor)
+        setUpDescriptionTextView(binding, guideStep.descriptionText, guideStep.descriptionTextColor)
+        setUpBackground(binding, guideStep.dialogBackground, guideStep.dialogBackgroundColor)
         setUpNextButton(
             binding,
-            step.nextButtonBackground,
-            step.nextButtonText,
-            step.nextButtonBackgroundColor,
-            step.nextButtonTextColor,
+            guideStep.nextButtonBackground,
+            guideStep.nextButtonText,
+            guideStep.nextButtonBackgroundColor,
+            guideStep.nextButtonTextColor,
         )
         setUpBackButton(
             binding,
-            step.backButtonBackground,
-            step.backButtonText,
-            step.backButtonBackgroundColor,
-            step.backButtonTextColor,
+            guideStep.backButtonBackground,
+            guideStep.backButtonText,
+            guideStep.backButtonBackgroundColor,
+            guideStep.backButtonTextColor,
             visible = showBack,
         )
         setUpClickListeners(binding, actions, showBack)
-        setUpPadding(binding, step.dialogPadding, context)
+        setUpPadding(binding, guideStep.dialogPadding, context)
     }
 
     private fun setUpTitleTextView(
@@ -148,9 +147,9 @@ internal object DefaultDialogView {
 internal class DefaultWalkthroughDialogContent : WalkthroughDialogContent {
     override fun createView(
         context: Context,
-        step: WalkthroughStep,
+        guideStep: GuideStep,
         stepIndex: Int,
         totalSteps: Int,
         actions: WalkthroughActions,
-    ): View = DefaultDialogView.create(context, step, stepIndex, totalSteps, actions)
+    ): View = DefaultDialogView.create(context, guideStep, stepIndex, totalSteps, actions)
 }

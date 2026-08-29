@@ -5,9 +5,9 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.view.isVisible
+import `in`.mandeep_singh.walkmethrough.GuideStep
 import `in`.mandeep_singh.walkmethrough.Position
 import `in`.mandeep_singh.walkmethrough.WalkthroughActions
-import `in`.mandeep_singh.walkmethrough.WalkthroughStep
 import `in`.mandeep_singh.walkmethrough.WalkthroughTooltipContent
 import `in`.mandeep_singh.walkmethrough.library.databinding.LayoutTooltipBinding
 
@@ -15,37 +15,37 @@ internal object DefaultTooltipView {
 
     fun create(
         context: Context,
-        step: WalkthroughStep,
+        guideStep: GuideStep,
         stepIndex: Int,
         totalSteps: Int,
         actions: WalkthroughActions,
     ): View {
         val binding = LayoutTooltipBinding.inflate(LayoutInflater.from(context))
-        bind(binding, step, actions)
+        bind(binding, guideStep, actions)
         return binding.root
     }
 
     private fun bind(
         binding: LayoutTooltipBinding,
-        step: WalkthroughStep,
+        guideStep: GuideStep,
         actions: WalkthroughActions,
     ) {
-        val resolvedPosition = step.dialogPosition ?: Position.BOTTOM
+        val resolvedPosition = guideStep.placement ?: Position.BOTTOM
         val showUpArrow = resolvedPosition == Position.BOTTOM
         val showDownArrow = resolvedPosition == Position.TOP
 
-        binding.tooltipArrowUp.isVisible = step.showTooltipArrow && showUpArrow
-        binding.tooltipArrowDown.isVisible = step.showTooltipArrow && showDownArrow
+        binding.tooltipArrowUp.isVisible = guideStep.showArrow && showUpArrow
+        binding.tooltipArrowDown.isVisible = guideStep.showArrow && showDownArrow
 
-        binding.tooltipTitleTextView.isVisible = !step.titleText.isNullOrBlank()
-        step.titleText?.let { binding.tooltipTitleTextView.text = it }
-        step.titleTextColor?.let { binding.tooltipTitleTextView.setTextColor(it) }
+        binding.tooltipTitleTextView.isVisible = !guideStep.titleText.isNullOrBlank()
+        guideStep.titleText?.let { binding.tooltipTitleTextView.text = it }
+        guideStep.titleTextColor?.let { binding.tooltipTitleTextView.setTextColor(it) }
 
-        binding.tooltipDescriptionTextView.isVisible = !step.descriptionText.isNullOrBlank()
-        step.descriptionText?.let { binding.tooltipDescriptionTextView.text = it }
-        step.descriptionTextColor?.let { binding.tooltipDescriptionTextView.setTextColor(it) }
+        binding.tooltipDescriptionTextView.isVisible = !guideStep.descriptionText.isNullOrBlank()
+        guideStep.descriptionText?.let { binding.tooltipDescriptionTextView.text = it }
+        guideStep.descriptionTextColor?.let { binding.tooltipDescriptionTextView.setTextColor(it) }
 
-        setBackground(binding, step.dialogBackground, step.dialogBackgroundColor)
+        setBackground(binding, guideStep.dialogBackground, guideStep.dialogBackgroundColor)
 
         binding.root.setOnClickListener { actions.onNext() }
     }
@@ -63,9 +63,9 @@ internal object DefaultTooltipView {
 internal class DefaultWalkthroughTooltipContent : WalkthroughTooltipContent {
     override fun createView(
         context: Context,
-        step: WalkthroughStep,
+        guideStep: GuideStep,
         stepIndex: Int,
         totalSteps: Int,
         actions: WalkthroughActions,
-    ): View = DefaultTooltipView.create(context, step, stepIndex, totalSteps, actions)
+    ): View = DefaultTooltipView.create(context, guideStep, stepIndex, totalSteps, actions)
 }

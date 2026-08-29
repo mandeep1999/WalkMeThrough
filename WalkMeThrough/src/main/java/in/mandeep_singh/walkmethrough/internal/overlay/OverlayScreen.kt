@@ -12,8 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
+import `in`.mandeep_singh.walkmethrough.GuidePresentation
 import `in`.mandeep_singh.walkmethrough.Position
-import `in`.mandeep_singh.walkmethrough.StepStyle
 import `in`.mandeep_singh.walkmethrough.internal.util.WalkthroughPositioning
 
 internal class OverlayScreen @JvmOverloads constructor(
@@ -26,7 +26,7 @@ internal class OverlayScreen @JvmOverloads constructor(
     private var onOutsideClick: (() -> Unit)? = null
     private var dimBackground = true
     private var highlightTarget = true
-    private var contentStyle = StepStyle.DIALOG
+    private var presentation = GuidePresentation.CARD
 
     private val overlayPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = 0x80000000.toInt()
@@ -65,12 +65,12 @@ internal class OverlayScreen @JvmOverloads constructor(
         viewToHighlight: View,
         contentView: View,
         contentPosition: Position?,
-        contentStyle: StepStyle,
+        presentation: GuidePresentation,
         dimBackground: Boolean,
         highlightTarget: Boolean,
         onOutsideClick: (() -> Unit)?,
     ) {
-        applyStepConfig(viewToHighlight, contentView, contentPosition, contentStyle, dimBackground, highlightTarget, onOutsideClick)
+        applyStepConfig(viewToHighlight, contentView, contentPosition, presentation, dimBackground, highlightTarget, onOutsideClick)
         if (parent == null) {
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
             parentViewGroup.addView(this)
@@ -82,12 +82,12 @@ internal class OverlayScreen @JvmOverloads constructor(
         viewToHighlight: View,
         contentView: View,
         contentPosition: Position?,
-        contentStyle: StepStyle,
+        presentation: GuidePresentation,
         dimBackground: Boolean,
         highlightTarget: Boolean,
         onOutsideClick: (() -> Unit)?,
     ) {
-        applyStepConfig(viewToHighlight, contentView, contentPosition, contentStyle, dimBackground, highlightTarget, onOutsideClick)
+        applyStepConfig(viewToHighlight, contentView, contentPosition, presentation, dimBackground, highlightTarget, onOutsideClick)
         invalidate()
     }
 
@@ -102,7 +102,7 @@ internal class OverlayScreen @JvmOverloads constructor(
         viewToHighlight: View,
         contentView: View,
         contentPosition: Position?,
-        contentStyle: StepStyle,
+        presentation: GuidePresentation,
         dimBackground: Boolean,
         highlightTarget: Boolean,
         onOutsideClick: (() -> Unit)?,
@@ -111,18 +111,18 @@ internal class OverlayScreen @JvmOverloads constructor(
         this.onOutsideClick = onOutsideClick
         this.dimBackground = dimBackground
         this.highlightTarget = highlightTarget
-        this.contentStyle = contentStyle
+        this.presentation = presentation
         removeAllViews()
-        positionContent(contentView, viewToHighlight, contentPosition, contentStyle)
+        positionContent(contentView, viewToHighlight, contentPosition, presentation)
     }
 
     private fun positionContent(
         contentView: View,
         highlightedView: View,
         contentPosition: Position?,
-        contentStyle: StepStyle,
+        presentation: GuidePresentation,
     ) {
-        if (contentStyle == StepStyle.TOOLTIP) {
+        if (presentation == GuidePresentation.TOOLTIP) {
             tooltipParams.topMargin = -3500
             tooltipParams.leftMargin = 0
             addView(contentView, tooltipParams)
