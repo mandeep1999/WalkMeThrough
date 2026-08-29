@@ -1,19 +1,22 @@
 [![](https://jitpack.io/v/mandeep1999/WalkMeThrough.svg)](https://jitpack.io/#mandeep1999/WalkMeThrough)
 
-
 # WalkMeThrough
 
-**WalkMeThrough** is an Android library designed to guide users through your app by highlighting specific views and displaying instructional dialogs. This README demonstrates how to set up and use the `WalkthroughBuilder` to create a walkthrough experience in your application.
+**WalkMeThrough** is an Android library that guides users through your app by highlighting specific views and showing instructional UI.
 
-## Overview
+## Add dependency
 
-The `WalkthroughBuilder` class helps you create and configure a walkthrough view that highlights a specific UI element and displays a dialog box with customizable content.
+Add JitPack to your `settings.gradle` if needed:
 
-## Usage
-
-### 1. Add Dependency
-
-Include the library dependency in your `build.gradle` file:
+```gradle
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
 
 ```gradle
 dependencies {
@@ -21,112 +24,139 @@ dependencies {
 }
 ```
 
-### 2. Set Up Your Activity
-
-Here’s how to set up the walkthrough using the WalkthroughBuilder class in your MainActivity:
+## Quick start
 
 ```kotlin
-import android.os.Bundle
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
-import `in`.mandeep_singh.walkmethrough.databinding.ActivityMainBinding
-import `in`.mandeep_singh.walkmethrough.walk_me_through.components.WalkthroughBuilder
-import `in`.mandeep_singh.walkmethrough.walk_me_through.data.enums.Position
+import `in`.mandeep_singh.walkmethrough.Placement
+import `in`.mandeep_singh.walkmethrough.Walkthrough
 
-/**
- * The main activity for the application.
- */
-class MainActivity : AppCompatActivity() {
-
-    private var _binding: ActivityMainBinding? = null
-    private val binding get() = _binding!!
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        _binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        init()
+Walkthrough.with(this)
+    .card(findViewById(R.id.profile_icon)) {
+        title = "Profile"
+        description = "Open your profile from here."
+        nextText = "Next"
+        placement = Placement.CENTER
     }
-
-    private fun init() {
-        WalkthroughBuilder(this)
-            .setViewToHighlight(binding.textView)
-            .setParentViewGroup(binding.content)
-            .setTitleText(getString(R.string.this_is_title_text))
-            .setDescriptionText(getString(R.string.this_is_description_text))
-            .setNextButtonText(getString(R.string.next))
-            .setBackButtonText(getString(R.string.back))
-            .setBackButtonBackground(
-                ContextCompat.getDrawable(
-                    this,
-                    R.drawable.curve_background_with_indigo_border
-                )
-            )
-            .setNextButtonBackground(
-                ContextCompat.getDrawable(
-                    this,
-                    R.drawable.curve_solid_indigo_background_with_indigo_border
-                )
-            )
-            .setBackButtonTextColor(getColor(R.color.indigo))
-            .setNextButtonTextColor(getColor(R.color.white))
-            .setOnBackClick(::onBackClick)
-            .setOnNextClick(::onNextClick)
-            .setDialogPosition(Position.CENTER)
-            .setOnOutsideClickListener(::onOutsideClick)
-            .setOnCloseClick(::onCloseClick)
-            .build()
+    .card(findViewById(R.id.settings_icon)) {
+        title = "Settings"
+        description = "Adjust preferences anytime."
+        backText = "Back"
+        nextText = "Done"
     }
-
-    private fun onBackClick() {
-        Toast.makeText(this, "Back Button", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun onNextClick() {
-        Toast.makeText(this, "Next Button", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun onOutsideClick() {
-        Toast.makeText(this, "Outside Button", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun onCloseClick() {
-        Toast.makeText(this, "Close Button", Toast.LENGTH_SHORT).show()
-    }
-}
-
+    .doOnStepShown { index -> /* analytics */ }
+    .doOnComplete { /* tour finished */ }
+    .show()
 ```
 
-### 3. Configuration Options
+The overlay attaches to the activity content root automatically. Override with `overlayParent(viewGroup)` if needed.
 
-The WalkthroughBuilder class allows you to configure the following:
+## Tooltip steps
 
-- `setViewToHighlight(view: View)`: The view to highlight in the walkthrough.
-- `setParentViewGroup(viewGroup: ViewGroup)`: The parent view group where the walkthrough view will be added.
-- `setTitleText(text: String)`: The title text to display in the dialog.
-- `setDescriptionText(text: String)`: The description text to display in the dialog.
-- `setNextButtonText(text: String)`: The text for the "Next" button.
-- `setBackButtonText(text: String)`: The text for the "Back" button.
-- `setBackButtonBackground(drawable: Drawable)`: Background drawable for the "Back" button.
-- `setNextButtonBackground(drawable: Drawable)`: Background drawable for the "Next" button.
-- `setBackButtonTextColor(color: Int)`: Text color for the "Back" button.
-- `setNextButtonTextColor(color: Int)`: Text color for the "Next" button.
-- `setOnBackClick(listener: () -> Unit)`: Callback for when the "Back" button is clicked.
-- `setOnNextClick(listener: () -> Unit)`: Callback for when the "Next" button is clicked.
-- `setDialogPosition(position: Position)`: Position of the dialog relative to the highlighted view.
-setOnOutsideClickListener(listener: () -> Unit): Callback for clicks outside the dialog.
-setOnCloseClick(listener: () -> Unit): Callback for the close button click.
+```kotlin
+Walkthrough.with(this)
+    .tooltip(findViewById(R.id.search_icon)) {
+        title = "Search"
+        description = "Find anything in the app."
+        placement = Placement.BOTTOM
+    }
+    .doOnComplete { /* finished */ }
+    .show()
+```
 
-### 4. Screenshots
+Tooltip defaults: no dimmed background, no target cutout, tap outside advances.
 
-Here are some screenshots demonstrating the WalkMeThrough library in action:
+## Mixed presentations
 
-<img src="https://github.com/user-attachments/assets/e9956af8-32f0-44d0-a135-902500376ef5" alt="drawing" width="400"/>
+```kotlin
+Walkthrough.with(this)
+    .fullScreen(contentRoot) {
+        title = "Welcome"
+        description = "A quick tour of the app."
+        nextText = "Start"
+    }
+    .spotlight(featureView)
+    .tooltip(searchView) { title = "Quick search tip"; placement = Placement.BOTTOM }
+    .card(settingsView) { title = "Settings"; nextText = "Done" }
+    .banner(cartView) { title = "Cart"; nextText = "Next" }
+    .show()
+```
 
-### License
-This project is licensed under the MIT License. See the LICENSE file for more details.
+## Spotlight, banner, and full-screen
 
+```kotlin
+Walkthrough.with(this)
+    .spotlight(findViewById(R.id.feature_button))
+    .banner(findViewById(R.id.cart_icon)) {
+        title = "Your cart"
+        description = "Review items before checkout."
+        nextText = "Continue"
+    }
+    .fullScreen(findViewById(android.R.id.content)) {
+        title = "Welcome"
+        description = "Let's walk through the basics."
+        nextText = "Get started"
+    }
+    .show()
+```
 
+## Custom UI
 
+Use `guideContent(...)` with `GuideContent` to replace default UI for any presentation. Return `null` for spotlight-only steps.
 
+```kotlin
+Walkthrough.with(this)
+    .guideContent(myGuideContent)
+    .card(target) { title = "Hello" }
+    .show()
+```
+
+## API overview
+
+| Method / type | Purpose |
+|---------------|---------|
+| `Walkthrough.with(activity)` | Entry point — returns [WalkthroughBuilder] |
+| `card(target) { ... }` | Instructional card with optional back/next |
+| `tooltip(target) { ... }` | Compact anchored tooltip |
+| `spotlight(target) { ... }` | Spotlight cutout only |
+| `banner(target) { ... }` | Bottom banner |
+| `fullScreen(target) { ... }` | Full-screen centered card |
+| `add(GuideStep)` | Add a pre-built step |
+| `overlayParent(viewGroup)` | Custom overlay attachment point |
+| `guideContent(GuideContent)` | Custom UI provider |
+| `setListener(WalkthroughListener)` | Java-friendly lifecycle callbacks |
+| `doOnStepShown`, `doOnComplete`, `doOnDismiss`, `doOnOutsideClick` | Kotlin callback helpers |
+| `show()` | Returns [WalkthroughController] |
+
+### Step builder properties
+
+| Property | Purpose |
+|----------|---------|
+| `title`, `description` | Copy |
+| `backText`, `nextText` | Navigation button labels |
+| `titleColor`, `descriptionColor` | Text colors |
+| `backTextColor`, `nextTextColor` | Button label colors |
+| `background`, `backgroundColor` | Content panel background |
+| `backBackground`, `nextBackground` | Button backgrounds |
+| `padding` | Inner padding (`Padding` in dp) |
+| `placement` | `Placement.TOP`, `CENTER`, or `BOTTOM` |
+| `dimBackground`, `highlightTarget` | Overlay behavior |
+| `advanceOnOutsideTap` | Tap outside advances step |
+| `showArrow` | Tooltip pointer arrow (tooltip only) |
+
+### GuidePresentation defaults
+
+| Presentation | Dim background | Highlight target | Tap outside advances |
+|--------------|----------------|------------------|------------------------|
+| `CARD` | yes | yes | no |
+| `TOOLTIP` | no | no | yes |
+| `SPOTLIGHT` | yes | yes | yes |
+| `BANNER` | yes | yes | no |
+| `FULL_SCREEN` | yes | no | no |
+
+## Screenshots
+
+<img src="https://github.com/user-attachments/assets/e9956af8-32f0-44d0-a135-902500376ef5" alt="WalkMeThrough screenshot" width="400"/>
+
+## License
+
+MIT — see [LICENSE](LICENSE).
