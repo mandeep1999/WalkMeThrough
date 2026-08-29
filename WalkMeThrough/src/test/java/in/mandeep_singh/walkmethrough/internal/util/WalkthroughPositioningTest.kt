@@ -1,7 +1,10 @@
 package `in`.mandeep_singh.walkmethrough.internal.util
 
+import `in`.mandeep_singh.walkmethrough.GuidePresentation
 import `in`.mandeep_singh.walkmethrough.Position
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -40,5 +43,21 @@ class WalkthroughPositioningTest {
         )
         assertEquals(100 + 48 / 2 - 120 / 2, left)
         assertEquals(100 + 48 + WalkthroughPositioning.dpToPx(context, 8f), top)
+    }
+
+    @Test
+    fun presentationDimDefaults() {
+        assertFalse(WalkthroughPositioning.resolveDimBackground(GuidePresentation.TOOLTIP, null))
+        assertTrue(WalkthroughPositioning.resolveDimBackground(GuidePresentation.SPOTLIGHT, null))
+        assertTrue(WalkthroughPositioning.resolveDimBackground(GuidePresentation.BANNER, null))
+        assertTrue(WalkthroughPositioning.resolveDimBackground(GuidePresentation.FULL_SCREEN, null))
+    }
+
+    @Test
+    fun presentationHighlightDefaults() {
+        assertFalse(WalkthroughPositioning.resolveHighlightTarget(GuidePresentation.TOOLTIP, null))
+        assertFalse(WalkthroughPositioning.resolveHighlightTarget(GuidePresentation.FULL_SCREEN, null))
+        assertTrue(WalkthroughPositioning.resolveHighlightTarget(GuidePresentation.SPOTLIGHT, null))
+        assertTrue(WalkthroughPositioning.resolveHighlightTarget(GuidePresentation.BANNER, null))
     }
 }

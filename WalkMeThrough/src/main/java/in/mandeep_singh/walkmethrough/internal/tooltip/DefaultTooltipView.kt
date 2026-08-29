@@ -8,7 +8,6 @@ import androidx.core.view.isVisible
 import `in`.mandeep_singh.walkmethrough.GuideStep
 import `in`.mandeep_singh.walkmethrough.Position
 import `in`.mandeep_singh.walkmethrough.WalkthroughActions
-import `in`.mandeep_singh.walkmethrough.WalkthroughTooltipContent
 import `in`.mandeep_singh.walkmethrough.library.databinding.LayoutTooltipBinding
 
 internal object DefaultTooltipView {
@@ -58,14 +57,4 @@ internal object DefaultTooltipView {
         background?.let { binding.tooltipBody.background = it }
         backgroundColor?.let { binding.tooltipBody.setBackgroundColor(it) }
     }
-}
-
-internal class DefaultWalkthroughTooltipContent : WalkthroughTooltipContent {
-    override fun createView(
-        context: Context,
-        guideStep: GuideStep,
-        stepIndex: Int,
-        totalSteps: Int,
-        actions: WalkthroughActions,
-    ): View = DefaultTooltipView.create(context, guideStep, stepIndex, totalSteps, actions)
 }

@@ -60,10 +60,22 @@ internal class OverlayScreen @JvmOverloads constructor(
         LayoutParams.WRAP_CONTENT,
     )
 
+    private val bannerParams = LayoutParams(
+        LayoutParams.MATCH_PARENT,
+        LayoutParams.WRAP_CONTENT,
+    ).apply {
+        gravity = Gravity.BOTTOM
+    }
+
+    private val fullScreenParams = LayoutParams(
+        LayoutParams.MATCH_PARENT,
+        LayoutParams.MATCH_PARENT,
+    )
+
     fun show(
         parentViewGroup: ViewGroup,
         viewToHighlight: View,
-        contentView: View,
+        contentView: View?,
         contentPosition: Position?,
         presentation: GuidePresentation,
         dimBackground: Boolean,
@@ -80,7 +92,7 @@ internal class OverlayScreen @JvmOverloads constructor(
 
     fun updateStep(
         viewToHighlight: View,
-        contentView: View,
+        contentView: View?,
         contentPosition: Position?,
         presentation: GuidePresentation,
         dimBackground: Boolean,
@@ -100,7 +112,7 @@ internal class OverlayScreen @JvmOverloads constructor(
 
     private fun applyStepConfig(
         viewToHighlight: View,
-        contentView: View,
+        contentView: View?,
         contentPosition: Position?,
         presentation: GuidePresentation,
         dimBackground: Boolean,
@@ -117,79 +129,112 @@ internal class OverlayScreen @JvmOverloads constructor(
     }
 
     private fun positionContent(
-        contentView: View,
+        contentView: View?,
         highlightedView: View,
         contentPosition: Position?,
         presentation: GuidePresentation,
     ) {
-        if (presentation == GuidePresentation.TOOLTIP) {
-            tooltipParams.topMargin = -3500
-            tooltipParams.leftMargin = 0
-            addView(contentView, tooltipParams)
-
-            contentView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    contentView.viewTreeObserver.removeOnGlobalLayoutListener(this)
-
-                    val overlayLocation = IntArray(2)
-                    getLocationOnScreen(overlayLocation)
-                    val viewLocation = IntArray(2)
-                    highlightedView.getLocationOnScreen(viewLocation)
-
-                    val targetLeft = viewLocation[0] - overlayLocation[0]
-                    val targetTop = viewLocation[1] - overlayLocation[1]
-
-                    val (left, top) = WalkthroughPositioning.getTooltipMargins(
-                        overlayWidth = width,
-                        targetLeft = targetLeft,
-                        targetTop = targetTop,
-                        targetWidth = highlightedView.width,
-                        targetHeight = highlightedView.height,
-                        tooltipWidth = contentView.width,
-                        tooltipHeight = contentView.height,
-                        position = contentPosition,
-                        context = context,
-                    )
-
-                    tooltipParams.leftMargin = left
-                    tooltipParams.topMargin = top
-                    contentView.layoutParams = tooltipParams
-                    contentView.visibility = View.VISIBLE
-                    invalidate()
-                }
-            })
-        } else {
-            dialogParams.topMargin = -3500
-            addView(contentView, dialogParams)
-
-            contentView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    contentView.viewTreeObserver.removeOnGlobalLayoutListener(this)
-
-                    val overlayLocation = IntArray(2)
-                    getLocationOnScreen(overlayLocation)
-                    val viewLocation = IntArray(2)
-                    highlightedView.getLocationOnScreen(viewLocation)
-
-                    val topOverlayHeight = viewLocation[1] - overlayLocation[1]
-                    val highlightHeight = highlightedView.height
-                    val bottomOverlayHeight = WalkthroughPositioning.windowHeight(context) -
-                        (topOverlayHeight + highlightHeight)
-
-                    dialogParams.topMargin = WalkthroughPositioning.getDialogTopMargin(
-                        topOverlayHeight = topOverlayHeight,
-                        bottomOverlayHeight = bottomOverlayHeight,
-                        dialogHeight = contentView.height,
-                        highlightHeight = highlightHeight,
-                        dialogPosition = contentPosition,
-                        context = context,
-                    )
-                    contentView.layoutParams = dialogParams
-                    contentView.visibility = View.VISIBLE
-                    invalidate()
-                }
-            })
+        if (contentView == null) {
+            return
         }
+
+        when (presentation) {
+            GuidePresentation.TOOLTIP -> positionTooltip(contentView, highlightedView, contentPosition)
+            GuidePresentation.BANNER -> positionBanner(contentView)
+            GuidePresentation.FULL_SCREEN -> positionFullScreen(contentView)
+            GuidePresentation.CARD,
+            GuidePresentation.SPOTLIGHT,
+            -> positionCard(contentView, highlightedView, contentPosition)
+        }
+    }
+
+    private fun positionTooltip(
+        contentView: View,
+        highlightedView: View,
+        contentPosition: Position?,
+    ) {
+        tooltipParams.topMargin = -3500
+        tooltipParams.leftMargin = 0
+        addView(contentView, tooltipParams)
+
+        contentView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                contentView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                val overlayLocation = IntArray(2)
+                getLocationOnScreen(overlayLocation)
+                val viewLocation = IntArray(2)
+                highlightedView.getLocationOnScreen(viewLocation)
+
+                val targetLeft = viewLocation[0] - overlayLocation[0]
+                val targetTop = viewLocation[1] - overlayLocation[1]
+
+                val (left, top) = WalkthroughPositioning.getTooltipMargins(
+                    overlayWidth = width,
+                    targetLeft = targetLeft,
+                    targetTop = targetTop,
+                    targetWidth = highlightedView.width,
+                    targetHeight = highlightedView.height,
+                    tooltipWidth = contentView.width,
+                    tooltipHeight = contentView.height,
+                    position = contentPosition,
+                    context = context,
+                )
+
+                tooltipParams.leftMargin = left
+                tooltipParams.topMargin = top
+                contentView.layoutParams = tooltipParams
+                contentView.visibility = View.VISIBLE
+                invalidate()
+            }
+        })
+    }
+
+    private fun positionBanner(contentView: View) {
+        addView(contentView, bannerParams)
+        contentView.visibility = View.VISIBLE
+    }
+
+    private fun positionFullScreen(contentView: View) {
+        addView(contentView, fullScreenParams)
+        contentView.visibility = View.VISIBLE
+    }
+
+    private fun positionCard(
+        contentView: View,
+        highlightedView: View,
+        contentPosition: Position?,
+    ) {
+        dialogParams.topMargin = -3500
+        addView(contentView, dialogParams)
+
+        contentView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                contentView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                val overlayLocation = IntArray(2)
+                getLocationOnScreen(overlayLocation)
+                val viewLocation = IntArray(2)
+                highlightedView.getLocationOnScreen(viewLocation)
+
+                val topOverlayHeight = viewLocation[1] - overlayLocation[1]
+                val highlightHeight = highlightedView.height
+                val bottomOverlayHeight = WalkthroughPositioning.windowHeight(context) -
+                    (topOverlayHeight + highlightHeight)
+
+                dialogParams.topMargin = WalkthroughPositioning.getDialogTopMargin(
+                    topOverlayHeight = topOverlayHeight,
+                    bottomOverlayHeight = bottomOverlayHeight,
+                    dialogHeight = contentView.height,
+                    highlightHeight = highlightHeight,
+                    dialogPosition = contentPosition,
+                    context = context,
+                )
+                contentView.layoutParams = dialogParams
+                contentView.visibility = View.VISIBLE
+                invalidate()
+            }
+        })
     }
 
     override fun dispatchDraw(canvas: Canvas) {

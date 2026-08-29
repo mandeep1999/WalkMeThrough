@@ -5,17 +5,15 @@ import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import `in`.mandeep_singh.walkmethrough.internal.dialog.DefaultWalkthroughDialogContent
+import `in`.mandeep_singh.walkmethrough.internal.content.DefaultWalkthroughGuideContent
 import `in`.mandeep_singh.walkmethrough.internal.overlay.OverlayScreen
-import `in`.mandeep_singh.walkmethrough.internal.tooltip.DefaultWalkthroughTooltipContent
 import `in`.mandeep_singh.walkmethrough.internal.util.WalkthroughPositioning
 
 class WalkthroughCoordinator internal constructor(
     private val activity: Activity,
     private val guideSteps: List<GuideStep>,
     private val overlayParent: ViewGroup?,
-    private val dialogContent: WalkthroughDialogContent?,
-    private val tooltipContent: WalkthroughTooltipContent?,
+    private val guideContent: WalkthroughGuideContent?,
     private val onStepShown: ((Int) -> Unit)?,
     private val onComplete: (() -> Unit)?,
     private val onDismiss: (() -> Unit)?,
@@ -121,26 +119,15 @@ class WalkthroughCoordinator internal constructor(
         onStepShown?.invoke(index)
     }
 
-    private fun createContentView(guideStep: GuideStep, index: Int): android.view.View {
-        return if (guideStep.presentation == GuidePresentation.TOOLTIP) {
-            val content = tooltipContent ?: DefaultWalkthroughTooltipContent()
-            content.createView(
-                context = activity,
-                guideStep = guideStep,
-                stepIndex = index,
-                totalSteps = guideSteps.size,
-                actions = this,
-            )
-        } else {
-            val content = dialogContent ?: DefaultWalkthroughDialogContent()
-            content.createView(
-                context = activity,
-                guideStep = guideStep,
-                stepIndex = index,
-                totalSteps = guideSteps.size,
-                actions = this,
-            )
-        }
+    private fun createContentView(guideStep: GuideStep, index: Int): android.view.View? {
+        val content = guideContent ?: DefaultWalkthroughGuideContent()
+        return content.createView(
+            context = activity,
+            guideStep = guideStep,
+            stepIndex = index,
+            totalSteps = guideSteps.size,
+            actions = this,
+        )
     }
 
     private fun activityOverlayParent(): ViewGroup {

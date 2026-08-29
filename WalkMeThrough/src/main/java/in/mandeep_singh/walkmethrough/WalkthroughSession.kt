@@ -14,26 +14,40 @@ class WalkthroughSession internal constructor(private val activity: Activity) {
     private var onComplete: (() -> Unit)? = null
     private var onDismiss: (() -> Unit)? = null
     private var onOutsideClick: (() -> Unit)? = null
-    private var dialogContent: WalkthroughDialogContent? = null
-    private var tooltipContent: WalkthroughTooltipContent? = null
+    private var guideContent: WalkthroughGuideContent? = null
     private var overlayParent: ViewGroup? = null
 
     fun add(guideStep: GuideStep) = apply { guideSteps.add(guideStep) }
 
-    /**
-     * Adds a card-style step with title, description, and optional navigation buttons.
-     */
     fun card(targetView: View, configure: CardStepBuilder.() -> Unit = {}) = apply {
         val builder = CardStepBuilder(targetView)
         builder.configure()
         guideSteps.add(builder.build())
     }
 
-    /**
-     * Adds a compact tooltip step anchored near [targetView].
-     */
     fun tooltip(targetView: View, configure: TooltipStepBuilder.() -> Unit = {}) = apply {
         val builder = TooltipStepBuilder(targetView)
+        builder.configure()
+        guideSteps.add(builder.build())
+    }
+
+    /** Spotlight cutout on [targetView] with no instructional UI. Tap outside to advance. */
+    fun spotlight(targetView: View, configure: SpotlightStepBuilder.() -> Unit = {}) = apply {
+        val builder = SpotlightStepBuilder(targetView)
+        builder.configure()
+        guideSteps.add(builder.build())
+    }
+
+    /** Bottom banner with optional title, description, and next action. */
+    fun banner(targetView: View, configure: BannerStepBuilder.() -> Unit = {}) = apply {
+        val builder = BannerStepBuilder(targetView)
+        builder.configure()
+        guideSteps.add(builder.build())
+    }
+
+    /** Full-screen centered card — useful for intro or summary steps. */
+    fun fullScreen(targetView: View, configure: FullScreenStepBuilder.() -> Unit = {}) = apply {
+        val builder = FullScreenStepBuilder(targetView)
         builder.configure()
         guideSteps.add(builder.build())
     }
@@ -46,24 +60,20 @@ class WalkthroughSession internal constructor(private val activity: Activity) {
 
     fun onOutsideClick(listener: () -> Unit) = apply { onOutsideClick = listener }
 
-    fun setDialogContent(content: WalkthroughDialogContent) = apply { dialogContent = content }
+    fun setGuideContent(content: WalkthroughGuideContent) = apply { guideContent = content }
 
-    fun setTooltipContent(content: WalkthroughTooltipContent) = apply { tooltipContent = content }
-
-    /**
-     * Optional override for the view group that hosts the overlay. By default the activity content root is used.
-     */
     fun setOverlayParent(viewGroup: ViewGroup) = apply { overlayParent = viewGroup }
 
     fun show(): WalkthroughCoordinator {
-        require(guideSteps.isNotEmpty()) { "Add at least one guide step with card() or tooltip() before calling show()" }
+        require(guideSteps.isNotEmpty()) {
+            "Add at least one guide step before calling show()"
+        }
 
         val coordinator = WalkthroughCoordinator(
             activity = activity,
             guideSteps = guideSteps.toList(),
             overlayParent = overlayParent,
-            dialogContent = dialogContent,
-            tooltipContent = tooltipContent,
+            guideContent = guideContent,
             onStepShown = onStepShown,
             onComplete = onComplete,
             onDismiss = onDismiss,

@@ -9,4 +9,13 @@ enum class GuidePresentation {
 
     /** Compact tooltip bubble anchored near the highlighted target. */
     TOOLTIP,
+
+    /** Dimmed overlay with a spotlight cutout only — no instructional UI. */
+    SPOTLIGHT,
+
+    /** Bottom banner anchored to the screen edge. */
+    BANNER,
+
+    /** Full-screen centered content over a dimmed background. */
+    FULL_SCREEN,
 }

@@ -98,13 +98,28 @@ object WalkthroughPositioning {
     }
 
     fun resolveDimBackground(presentation: GuidePresentation, dimBackground: Boolean?): Boolean {
-        return dimBackground ?: (presentation == GuidePresentation.CARD)
+        return dimBackground ?: when (presentation) {
+            GuidePresentation.TOOLTIP -> false
+            GuidePresentation.CARD,
+            GuidePresentation.SPOTLIGHT,
+            GuidePresentation.BANNER,
+            GuidePresentation.FULL_SCREEN,
+            -> true
+        }
     }
 
     fun resolveHighlightTarget(
         presentation: GuidePresentation,
         highlightTarget: Boolean?,
     ): Boolean {
-        return highlightTarget ?: (presentation == GuidePresentation.CARD)
+        return highlightTarget ?: when (presentation) {
+            GuidePresentation.TOOLTIP,
+            GuidePresentation.FULL_SCREEN,
+            -> false
+            GuidePresentation.CARD,
+            GuidePresentation.SPOTLIGHT,
+            GuidePresentation.BANNER,
+            -> true
+        }
     }
 }

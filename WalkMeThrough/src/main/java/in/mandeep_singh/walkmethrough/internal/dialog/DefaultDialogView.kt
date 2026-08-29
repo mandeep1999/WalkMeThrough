@@ -8,7 +8,6 @@ import androidx.core.view.isVisible
 import `in`.mandeep_singh.walkmethrough.GuideStep
 import `in`.mandeep_singh.walkmethrough.Padding
 import `in`.mandeep_singh.walkmethrough.WalkthroughActions
-import `in`.mandeep_singh.walkmethrough.WalkthroughDialogContent
 import `in`.mandeep_singh.walkmethrough.library.databinding.LayoutDialogBoxBinding
 import `in`.mandeep_singh.walkmethrough.internal.util.WalkthroughPositioning
 
@@ -142,14 +141,4 @@ internal object DefaultDialogView {
             )
         }
     }
-}
-
-internal class DefaultWalkthroughDialogContent : WalkthroughDialogContent {
-    override fun createView(
-        context: Context,
-        guideStep: GuideStep,
-        stepIndex: Int,
-        totalSteps: Int,
-        actions: WalkthroughActions,
-    ): View = DefaultDialogView.create(context, guideStep, stepIndex, totalSteps, actions)
 }
