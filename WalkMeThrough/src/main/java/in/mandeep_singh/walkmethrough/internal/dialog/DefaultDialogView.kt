@@ -5,9 +5,9 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.view.isVisible
+import `in`.mandeep_singh.walkmethrough.GuideActions
 import `in`.mandeep_singh.walkmethrough.GuideStep
 import `in`.mandeep_singh.walkmethrough.Padding
-import `in`.mandeep_singh.walkmethrough.WalkthroughActions
 import `in`.mandeep_singh.walkmethrough.library.databinding.LayoutDialogBoxBinding
 import `in`.mandeep_singh.walkmethrough.internal.util.WalkthroughPositioning
 
@@ -15,74 +15,74 @@ internal object DefaultDialogView {
 
     fun create(
         context: Context,
-        guideStep: GuideStep,
+        step: GuideStep,
         stepIndex: Int,
         totalSteps: Int,
-        actions: WalkthroughActions,
+        actions: GuideActions,
     ): View {
         val binding = LayoutDialogBoxBinding.inflate(LayoutInflater.from(context))
-        bind(binding, guideStep, stepIndex, actions)
+        bind(binding, step, stepIndex, actions)
         return binding.root
     }
 
     private fun bind(
         binding: LayoutDialogBoxBinding,
-        guideStep: GuideStep,
+        step: GuideStep,
         stepIndex: Int,
-        actions: WalkthroughActions,
+        actions: GuideActions,
     ) {
         val context = binding.root.context
         val showBack = stepIndex > 0
 
-        setUpTitleTextView(binding, guideStep.titleText, guideStep.titleTextColor)
-        setUpDescriptionTextView(binding, guideStep.descriptionText, guideStep.descriptionTextColor)
-        setUpBackground(binding, guideStep.dialogBackground, guideStep.dialogBackgroundColor)
+        setUpTitleTextView(binding, step.title, step.titleColor)
+        setUpDescriptionTextView(binding, step.description, step.descriptionColor)
+        setUpBackground(binding, step.background, step.backgroundColor)
         setUpNextButton(
             binding,
-            guideStep.nextButtonBackground,
-            guideStep.nextButtonText,
-            guideStep.nextButtonBackgroundColor,
-            guideStep.nextButtonTextColor,
+            step.nextBackground,
+            step.nextText,
+            step.nextBackgroundColor,
+            step.nextTextColor,
         )
         setUpBackButton(
             binding,
-            guideStep.backButtonBackground,
-            guideStep.backButtonText,
-            guideStep.backButtonBackgroundColor,
-            guideStep.backButtonTextColor,
+            step.backBackground,
+            step.backText,
+            step.backBackgroundColor,
+            step.backTextColor,
             visible = showBack,
         )
         setUpClickListeners(binding, actions, showBack)
-        setUpPadding(binding, guideStep.dialogPadding, context)
+        setUpPadding(binding, step.padding, context)
     }
 
     private fun setUpTitleTextView(
         binding: LayoutDialogBoxBinding,
-        titleText: String?,
-        titleTextColor: Int?,
+        title: String?,
+        titleColor: Int?,
     ) {
-        binding.titleTextView.isVisible = !titleText.isNullOrBlank()
-        titleText?.let { binding.titleTextView.text = it }
-        titleTextColor?.let { binding.titleTextView.setTextColor(it) }
+        binding.titleTextView.isVisible = !title.isNullOrBlank()
+        title?.let { binding.titleTextView.text = it }
+        titleColor?.let { binding.titleTextView.setTextColor(it) }
     }
 
     private fun setUpDescriptionTextView(
         binding: LayoutDialogBoxBinding,
-        descriptionText: String?,
-        descriptionTextColor: Int?,
+        description: String?,
+        descriptionColor: Int?,
     ) {
-        binding.descriptionTextView.isVisible = !descriptionText.isNullOrBlank()
-        descriptionText?.let { binding.descriptionTextView.text = it }
-        descriptionTextColor?.let { binding.descriptionTextView.setTextColor(it) }
+        binding.descriptionTextView.isVisible = !description.isNullOrBlank()
+        description?.let { binding.descriptionTextView.text = it }
+        descriptionColor?.let { binding.descriptionTextView.setTextColor(it) }
     }
 
     private fun setUpBackground(
         binding: LayoutDialogBoxBinding,
-        dialogBackground: Drawable?,
-        dialogBackgroundColor: Int?,
+        background: Drawable?,
+        backgroundColor: Int?,
     ) {
-        dialogBackground?.let { binding.root.background = it }
-        dialogBackgroundColor?.let { binding.root.setBackgroundColor(it) }
+        background?.let { binding.root.background = it }
+        backgroundColor?.let { binding.root.setBackgroundColor(it) }
     }
 
     private fun setUpNextButton(
@@ -116,7 +116,7 @@ internal object DefaultDialogView {
 
     private fun setUpClickListeners(
         binding: LayoutDialogBoxBinding,
-        actions: WalkthroughActions,
+        actions: GuideActions,
         showBack: Boolean,
     ) {
         binding.backButton.setOnClickListener {
@@ -129,10 +129,10 @@ internal object DefaultDialogView {
 
     private fun setUpPadding(
         binding: LayoutDialogBoxBinding,
-        dialogPadding: Padding?,
+        padding: Padding?,
         context: Context,
     ) {
-        dialogPadding?.let {
+        padding?.let {
             binding.root.setPadding(
                 WalkthroughPositioning.dpToPx(context, it.left?.toFloat()),
                 WalkthroughPositioning.dpToPx(context, it.top?.toFloat()),

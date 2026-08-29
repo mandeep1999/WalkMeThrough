@@ -1,16 +1,16 @@
 package `in`.mandeep_singh.walkmethrough
 
 /**
- * Vertical placement of the walkthrough dialog relative to the highlighted view.
+ * Placement of guide content relative to the highlighted target.
  */
-enum class Position {
+enum class Placement {
     TOP,
     CENTER,
     BOTTOM;
 
     companion object {
-        fun fromString(position: String?): Position {
-            return when (position?.uppercase()) {
+        fun fromString(value: String?): Placement {
+            return when (value?.uppercase()) {
                 "TOP" -> TOP
                 "CENTER" -> CENTER
                 "BOTTOM" -> BOTTOM

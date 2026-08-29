@@ -3,8 +3,13 @@ package `in`.mandeep_singh.walkmethrough
 import android.app.Activity
 
 /**
- * Entry point for creating walkthrough sessions.
+ * Entry point for creating walkthroughs.
  */
 object Walkthrough {
-    fun from(activity: Activity): WalkthroughSession = WalkthroughSession(activity)
+
+    /**
+     * Starts configuring a walkthrough for [activity].
+     */
+    @JvmStatic
+    fun with(activity: Activity): WalkthroughBuilder = WalkthroughBuilder(activity)
 }

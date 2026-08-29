@@ -4,103 +4,77 @@ import android.graphics.drawable.Drawable
 import android.view.View
 
 /**
- * Configuration for a single step in a guided walkthrough.
+ * Immutable configuration for a single guide step.
  */
 data class GuideStep(
-    val targetView: View,
+    val target: View,
     val presentation: GuidePresentation = GuidePresentation.CARD,
-    val titleText: String? = null,
-    val descriptionText: String? = null,
-    val backButtonText: String? = null,
-    val nextButtonText: String? = null,
-    val dialogBackgroundColor: Int? = null,
-    val titleTextColor: Int? = null,
-    val descriptionTextColor: Int? = null,
-    val backButtonTextColor: Int? = null,
-    val nextButtonTextColor: Int? = null,
-    val backButtonBackgroundColor: Int? = null,
-    val nextButtonBackgroundColor: Int? = null,
-    val dialogBackground: Drawable? = null,
-    val nextButtonBackground: Drawable? = null,
-    val backButtonBackground: Drawable? = null,
-    val dialogPadding: Padding? = null,
-    val placement: Position? = null,
+    val title: String? = null,
+    val description: String? = null,
+    val backText: String? = null,
+    val nextText: String? = null,
+    val backgroundColor: Int? = null,
+    val titleColor: Int? = null,
+    val descriptionColor: Int? = null,
+    val backTextColor: Int? = null,
+    val nextTextColor: Int? = null,
+    val backBackgroundColor: Int? = null,
+    val nextBackgroundColor: Int? = null,
+    val background: Drawable? = null,
+    val nextBackground: Drawable? = null,
+    val backBackground: Drawable? = null,
+    val padding: Padding? = null,
+    val placement: Placement? = null,
     val dimBackground: Boolean? = null,
     val highlightTarget: Boolean? = null,
     val showArrow: Boolean = true,
     val advanceOnOutsideTap: Boolean = false,
 )
 
-class CardStepBuilder(private val targetView: View) {
-    var titleText: String? = null
-    var descriptionText: String? = null
-    var backButtonText: String? = null
-    var nextButtonText: String? = null
-    var dialogBackgroundColor: Int? = null
-    var titleTextColor: Int? = null
-    var descriptionTextColor: Int? = null
-    var backButtonTextColor: Int? = null
-    var nextButtonTextColor: Int? = null
-    var backButtonBackgroundColor: Int? = null
-    var nextButtonBackgroundColor: Int? = null
-    var dialogBackground: Drawable? = null
-    var nextButtonBackground: Drawable? = null
-    var backButtonBackground: Drawable? = null
-    var dialogPadding: Padding? = null
-    var placement: Position? = null
+@WalkthroughDsl
+abstract class StepBuilder internal constructor(
+    internal val target: View,
+    internal val presentation: GuidePresentation,
+) {
+    var title: String? = null
+    var description: String? = null
+    var backText: String? = null
+    var nextText: String? = null
+    var backgroundColor: Int? = null
+    var titleColor: Int? = null
+    var descriptionColor: Int? = null
+    var backTextColor: Int? = null
+    var nextTextColor: Int? = null
+    var backBackgroundColor: Int? = null
+    var nextBackgroundColor: Int? = null
+    var background: Drawable? = null
+    var nextBackground: Drawable? = null
+    var backBackground: Drawable? = null
+    var padding: Padding? = null
+    var placement: Placement? = null
     var dimBackground: Boolean? = null
     var highlightTarget: Boolean? = null
     var advanceOnOutsideTap: Boolean = false
-
-    fun build(): GuideStep = GuideStep(
-        targetView = targetView,
-        presentation = GuidePresentation.CARD,
-        titleText = titleText,
-        descriptionText = descriptionText,
-        backButtonText = backButtonText,
-        nextButtonText = nextButtonText,
-        dialogBackgroundColor = dialogBackgroundColor,
-        titleTextColor = titleTextColor,
-        descriptionTextColor = descriptionTextColor,
-        backButtonTextColor = backButtonTextColor,
-        nextButtonTextColor = nextButtonTextColor,
-        backButtonBackgroundColor = backButtonBackgroundColor,
-        nextButtonBackgroundColor = nextButtonBackgroundColor,
-        dialogBackground = dialogBackground,
-        nextButtonBackground = nextButtonBackground,
-        backButtonBackground = backButtonBackground,
-        dialogPadding = dialogPadding,
-        placement = placement,
-        dimBackground = dimBackground,
-        highlightTarget = highlightTarget,
-        advanceOnOutsideTap = advanceOnOutsideTap,
-    )
-}
-
-class TooltipStepBuilder(private val targetView: View) {
-    var titleText: String? = null
-    var descriptionText: String? = null
-    var titleTextColor: Int? = null
-    var descriptionTextColor: Int? = null
-    var dialogBackgroundColor: Int? = null
-    var dialogBackground: Drawable? = null
-    var dialogPadding: Padding? = null
-    var placement: Position? = null
-    var dimBackground: Boolean? = false
-    var highlightTarget: Boolean? = false
     var showArrow: Boolean = true
-    var advanceOnOutsideTap: Boolean = true
 
-    fun build(): GuideStep = GuideStep(
-        targetView = targetView,
-        presentation = GuidePresentation.TOOLTIP,
-        titleText = titleText,
-        descriptionText = descriptionText,
-        titleTextColor = titleTextColor,
-        descriptionTextColor = descriptionTextColor,
-        dialogBackgroundColor = dialogBackgroundColor,
-        dialogBackground = dialogBackground,
-        dialogPadding = dialogPadding,
+    internal fun toGuideStep(): GuideStep = GuideStep(
+        target = target,
+        presentation = presentation,
+        title = title,
+        description = description,
+        backText = backText,
+        nextText = nextText,
+        backgroundColor = backgroundColor,
+        titleColor = titleColor,
+        descriptionColor = descriptionColor,
+        backTextColor = backTextColor,
+        nextTextColor = nextTextColor,
+        backBackgroundColor = backBackgroundColor,
+        nextBackgroundColor = nextBackgroundColor,
+        background = background,
+        nextBackground = nextBackground,
+        backBackground = backBackground,
+        padding = padding,
         placement = placement,
         dimBackground = dimBackground,
         highlightTarget = highlightTarget,
@@ -109,94 +83,41 @@ class TooltipStepBuilder(private val targetView: View) {
     )
 }
 
-class SpotlightStepBuilder(private val targetView: View) {
-    var dimBackground: Boolean? = true
-    var highlightTarget: Boolean? = true
-    var advanceOnOutsideTap: Boolean = true
+@WalkthroughDsl
+class CardStepBuilder internal constructor(target: View) : StepBuilder(target, GuidePresentation.CARD)
 
-    fun build(): GuideStep = GuideStep(
-        targetView = targetView,
-        presentation = GuidePresentation.SPOTLIGHT,
-        dimBackground = dimBackground,
-        highlightTarget = highlightTarget,
-        advanceOnOutsideTap = advanceOnOutsideTap,
-    )
+@WalkthroughDsl
+class TooltipStepBuilder internal constructor(target: View) : StepBuilder(target, GuidePresentation.TOOLTIP) {
+    init {
+        dimBackground = false
+        highlightTarget = false
+        advanceOnOutsideTap = true
+    }
 }
 
-class BannerStepBuilder(private val targetView: View) {
-    var titleText: String? = null
-    var descriptionText: String? = null
-    var nextButtonText: String? = null
-    var titleTextColor: Int? = null
-    var descriptionTextColor: Int? = null
-    var nextButtonTextColor: Int? = null
-    var nextButtonBackgroundColor: Int? = null
-    var nextButtonBackground: Drawable? = null
-    var dialogBackgroundColor: Int? = null
-    var dialogBackground: Drawable? = null
-    var dimBackground: Boolean? = true
-    var highlightTarget: Boolean? = true
-    var advanceOnOutsideTap: Boolean = false
-
-    fun build(): GuideStep = GuideStep(
-        targetView = targetView,
-        presentation = GuidePresentation.BANNER,
-        titleText = titleText,
-        descriptionText = descriptionText,
-        nextButtonText = nextButtonText,
-        titleTextColor = titleTextColor,
-        descriptionTextColor = descriptionTextColor,
-        nextButtonTextColor = nextButtonTextColor,
-        nextButtonBackgroundColor = nextButtonBackgroundColor,
-        nextButtonBackground = nextButtonBackground,
-        dialogBackgroundColor = dialogBackgroundColor,
-        dialogBackground = dialogBackground,
-        dimBackground = dimBackground,
-        highlightTarget = highlightTarget,
-        advanceOnOutsideTap = advanceOnOutsideTap,
-    )
+@WalkthroughDsl
+class SpotlightStepBuilder internal constructor(target: View) : StepBuilder(target, GuidePresentation.SPOTLIGHT) {
+    init {
+        dimBackground = true
+        highlightTarget = true
+        advanceOnOutsideTap = true
+    }
 }
 
-class FullScreenStepBuilder(private val targetView: View) {
-    var titleText: String? = null
-    var descriptionText: String? = null
-    var backButtonText: String? = null
-    var nextButtonText: String? = null
-    var dialogBackgroundColor: Int? = null
-    var titleTextColor: Int? = null
-    var descriptionTextColor: Int? = null
-    var backButtonTextColor: Int? = null
-    var nextButtonTextColor: Int? = null
-    var backButtonBackgroundColor: Int? = null
-    var nextButtonBackgroundColor: Int? = null
-    var dialogBackground: Drawable? = null
-    var nextButtonBackground: Drawable? = null
-    var backButtonBackground: Drawable? = null
-    var dialogPadding: Padding? = null
-    var dimBackground: Boolean? = true
-    var highlightTarget: Boolean? = false
-    var advanceOnOutsideTap: Boolean = false
+@WalkthroughDsl
+class BannerStepBuilder internal constructor(target: View) : StepBuilder(target, GuidePresentation.BANNER) {
+    init {
+        dimBackground = true
+        highlightTarget = true
+        advanceOnOutsideTap = false
+    }
+}
 
-    fun build(): GuideStep = GuideStep(
-        targetView = targetView,
-        presentation = GuidePresentation.FULL_SCREEN,
-        titleText = titleText,
-        descriptionText = descriptionText,
-        backButtonText = backButtonText,
-        nextButtonText = nextButtonText,
-        dialogBackgroundColor = dialogBackgroundColor,
-        titleTextColor = titleTextColor,
-        descriptionTextColor = descriptionTextColor,
-        backButtonTextColor = backButtonTextColor,
-        nextButtonTextColor = nextButtonTextColor,
-        backButtonBackgroundColor = backButtonBackgroundColor,
-        nextButtonBackgroundColor = nextButtonBackgroundColor,
-        dialogBackground = dialogBackground,
-        nextButtonBackground = nextButtonBackground,
-        backButtonBackground = backButtonBackground,
-        dialogPadding = dialogPadding,
-        dimBackground = dimBackground,
-        highlightTarget = highlightTarget,
-        advanceOnOutsideTap = advanceOnOutsideTap,
-    )
+@WalkthroughDsl
+class FullScreenStepBuilder internal constructor(target: View) : StepBuilder(target, GuidePresentation.FULL_SCREEN) {
+    init {
+        dimBackground = true
+        highlightTarget = false
+        advanceOnOutsideTap = false
+    }
 }

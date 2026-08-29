@@ -1,7 +1,7 @@
 package `in`.mandeep_singh.walkmethrough.internal.util
 
 import `in`.mandeep_singh.walkmethrough.GuidePresentation
-import `in`.mandeep_singh.walkmethrough.Position
+import `in`.mandeep_singh.walkmethrough.Placement
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -16,13 +16,13 @@ class WalkthroughPositioningTest {
     private val context = RuntimeEnvironment.getApplication()
 
     @Test
-    fun topPositionWhenSpaceAboveIsLarger() {
+    fun topPlacementWhenSpaceAboveIsLarger() {
         val topMargin = WalkthroughPositioning.getDialogTopMargin(
             topOverlayHeight = 400,
             bottomOverlayHeight = 100,
             dialogHeight = 80,
             highlightHeight = 50,
-            dialogPosition = Position.TOP,
+            placement = Placement.TOP,
             context = context,
         )
         assertEquals(WalkthroughPositioning.dpToPx(context, 16f), topMargin)
@@ -38,7 +38,7 @@ class WalkthroughPositioningTest {
             targetHeight = 48,
             tooltipWidth = 120,
             tooltipHeight = 60,
-            position = Position.BOTTOM,
+            placement = Placement.BOTTOM,
             context = context,
         )
         assertEquals(100 + 48 / 2 - 120 / 2, left)

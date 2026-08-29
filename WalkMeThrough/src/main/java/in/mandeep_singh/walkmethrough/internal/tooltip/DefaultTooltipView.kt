@@ -5,46 +5,46 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.view.isVisible
+import `in`.mandeep_singh.walkmethrough.GuideActions
 import `in`.mandeep_singh.walkmethrough.GuideStep
-import `in`.mandeep_singh.walkmethrough.Position
-import `in`.mandeep_singh.walkmethrough.WalkthroughActions
+import `in`.mandeep_singh.walkmethrough.Placement
 import `in`.mandeep_singh.walkmethrough.library.databinding.LayoutTooltipBinding
 
 internal object DefaultTooltipView {
 
     fun create(
         context: Context,
-        guideStep: GuideStep,
+        step: GuideStep,
         stepIndex: Int,
         totalSteps: Int,
-        actions: WalkthroughActions,
+        actions: GuideActions,
     ): View {
         val binding = LayoutTooltipBinding.inflate(LayoutInflater.from(context))
-        bind(binding, guideStep, actions)
+        bind(binding, step, actions)
         return binding.root
     }
 
     private fun bind(
         binding: LayoutTooltipBinding,
-        guideStep: GuideStep,
-        actions: WalkthroughActions,
+        step: GuideStep,
+        actions: GuideActions,
     ) {
-        val resolvedPosition = guideStep.placement ?: Position.BOTTOM
-        val showUpArrow = resolvedPosition == Position.BOTTOM
-        val showDownArrow = resolvedPosition == Position.TOP
+        val resolvedPlacement = step.placement ?: Placement.BOTTOM
+        val showUpArrow = resolvedPlacement == Placement.BOTTOM
+        val showDownArrow = resolvedPlacement == Placement.TOP
 
-        binding.tooltipArrowUp.isVisible = guideStep.showArrow && showUpArrow
-        binding.tooltipArrowDown.isVisible = guideStep.showArrow && showDownArrow
+        binding.tooltipArrowUp.isVisible = step.showArrow && showUpArrow
+        binding.tooltipArrowDown.isVisible = step.showArrow && showDownArrow
 
-        binding.tooltipTitleTextView.isVisible = !guideStep.titleText.isNullOrBlank()
-        guideStep.titleText?.let { binding.tooltipTitleTextView.text = it }
-        guideStep.titleTextColor?.let { binding.tooltipTitleTextView.setTextColor(it) }
+        binding.tooltipTitleTextView.isVisible = !step.title.isNullOrBlank()
+        step.title?.let { binding.tooltipTitleTextView.text = it }
+        step.titleColor?.let { binding.tooltipTitleTextView.setTextColor(it) }
 
-        binding.tooltipDescriptionTextView.isVisible = !guideStep.descriptionText.isNullOrBlank()
-        guideStep.descriptionText?.let { binding.tooltipDescriptionTextView.text = it }
-        guideStep.descriptionTextColor?.let { binding.tooltipDescriptionTextView.setTextColor(it) }
+        binding.tooltipDescriptionTextView.isVisible = !step.description.isNullOrBlank()
+        step.description?.let { binding.tooltipDescriptionTextView.text = it }
+        step.descriptionColor?.let { binding.tooltipDescriptionTextView.setTextColor(it) }
 
-        setBackground(binding, guideStep.dialogBackground, guideStep.dialogBackgroundColor)
+        setBackground(binding, step.background, step.backgroundColor)
 
         binding.root.setOnClickListener { actions.onNext() }
     }

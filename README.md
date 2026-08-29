@@ -24,135 +24,124 @@ dependencies {
 }
 ```
 
-## Guided walkthrough (recommended)
+## Quick start
 
 ```kotlin
-import `in`.mandeep_singh.walkmethrough.Position
+import `in`.mandeep_singh.walkmethrough.Placement
 import `in`.mandeep_singh.walkmethrough.Walkthrough
 
-Walkthrough.from(this)
+Walkthrough.with(this)
     .card(findViewById(R.id.profile_icon)) {
-        titleText = "Profile"
-        descriptionText = "Open your profile from here."
-        nextButtonText = "Next"
-        placement = Position.CENTER
+        title = "Profile"
+        description = "Open your profile from here."
+        nextText = "Next"
+        placement = Placement.CENTER
     }
     .card(findViewById(R.id.settings_icon)) {
-        titleText = "Settings"
-        descriptionText = "Adjust preferences anytime."
-        backButtonText = "Back"
-        nextButtonText = "Done"
+        title = "Settings"
+        description = "Adjust preferences anytime."
+        backText = "Back"
+        nextText = "Done"
     }
-    .onStepShown { index -> /* analytics */ }
-    .onComplete { /* tour finished */ }
+    .doOnStepShown { index -> /* analytics */ }
+    .doOnComplete { /* tour finished */ }
     .show()
 ```
 
-The overlay attaches to the activity content root automatically. Override with `setOverlayParent(viewGroup)` if needed.
+The overlay attaches to the activity content root automatically. Override with `overlayParent(viewGroup)` if needed.
 
-## Tooltip guide steps
-
-Use compact tooltip bubbles for quick hints:
+## Tooltip steps
 
 ```kotlin
-Walkthrough.from(this)
+Walkthrough.with(this)
     .tooltip(findViewById(R.id.search_icon)) {
-        titleText = "Search"
-        descriptionText = "Find anything in the app."
-        placement = Position.BOTTOM
+        title = "Search"
+        description = "Find anything in the app."
+        placement = Placement.BOTTOM
     }
-    .tooltip(findViewById(R.id.filter_icon)) {
-        titleText = "Filters"
-        placement = Position.TOP
-    }
-    .onComplete { /* finished */ }
+    .doOnComplete { /* finished */ }
     .show()
 ```
 
-Tooltip defaults: no dimmed background, no target cutout, tap outside advances. Override per step:
+Tooltip defaults: no dimmed background, no target cutout, tap outside advances.
+
+## Mixed presentations
 
 ```kotlin
-.tooltip(target) {
-    dimBackground = true
-    highlightTarget = true
-    advanceOnOutsideTap = false
-}
-```
-
-Mix presentation types in one guide:
-
-```kotlin
-Walkthrough.from(this)
+Walkthrough.with(this)
     .fullScreen(contentRoot) {
-        titleText = "Welcome"
-        descriptionText = "A quick tour of the app."
-        nextButtonText = "Start"
+        title = "Welcome"
+        description = "A quick tour of the app."
+        nextText = "Start"
     }
     .spotlight(featureView)
-    .tooltip(searchView) { titleText = "Quick search tip"; placement = Position.BOTTOM }
-    .card(settingsView) { titleText = "Settings"; nextButtonText = "Done" }
-    .banner(cartView) { titleText = "Cart"; nextButtonText = "Next" }
+    .tooltip(searchView) { title = "Quick search tip"; placement = Placement.BOTTOM }
+    .card(settingsView) { title = "Settings"; nextText = "Done" }
+    .banner(cartView) { title = "Cart"; nextText = "Next" }
     .show()
 ```
 
-## Spotlight steps
-
-Highlight a target with no instructional UI — useful for “look here” moments:
+## Spotlight, banner, and full-screen
 
 ```kotlin
-Walkthrough.from(this)
+Walkthrough.with(this)
     .spotlight(findViewById(R.id.feature_button))
-    .show()
-```
-
-Defaults: dimmed background, spotlight cutout, tap outside advances.
-
-## Banner steps
-
-Bottom banner anchored to the screen edge:
-
-```kotlin
-Walkthrough.from(this)
     .banner(findViewById(R.id.cart_icon)) {
-        titleText = "Your cart"
-        descriptionText = "Review items before checkout."
-        nextButtonText = "Continue"
+        title = "Your cart"
+        description = "Review items before checkout."
+        nextText = "Continue"
     }
-    .show()
-```
-
-## Full-screen steps
-
-Centered card over a dimmed background — good for intro or summary screens:
-
-```kotlin
-Walkthrough.from(this)
     .fullScreen(findViewById(android.R.id.content)) {
-        titleText = "Welcome"
-        descriptionText = "Let's walk through the basics."
-        nextButtonText = "Get started"
+        title = "Welcome"
+        description = "Let's walk through the basics."
+        nextText = "Get started"
     }
     .show()
 ```
 
 ## Custom UI
 
-Use `setGuideContent(...)` with `WalkthroughGuideContent` to replace default UI for any presentation type. Return `null` for spotlight-only steps with no overlay content.
+Use `guideContent(...)` with `GuideContent` to replace default UI for any presentation. Return `null` for spotlight-only steps.
+
+```kotlin
+Walkthrough.with(this)
+    .guideContent(myGuideContent)
+    .card(target) { title = "Hello" }
+    .show()
+```
 
 ## API overview
 
 | Method / type | Purpose |
 |---------------|---------|
-| `card(target) { ... }` | Instructional card with optional back/next buttons |
-| `tooltip(target) { ... }` | Compact anchored tooltip bubble |
-| `spotlight(target) { ... }` | Spotlight cutout only, no instructional UI |
-| `banner(target) { ... }` | Bottom banner with title, description, and next action |
-| `fullScreen(target) { ... }` | Full-screen centered card over dimmed background |
-| `add(GuideStep)` | Add a pre-built guide step |
-| `setGuideContent(...)` | Custom UI via `WalkthroughGuideContent` |
-| `placement` | `Position.TOP`, `CENTER`, or `BOTTOM` relative to target |
-| `onStepShown`, `onComplete`, `onDismiss`, `onOutsideClick` | Session callbacks |
-| `show()` | Returns `WalkthroughCoordinator` for manual `dismiss()` |
+| `Walkthrough.with(activity)` | Entry point — returns [WalkthroughBuilder] |
+| `card(target) { ... }` | Instructional card with optional back/next |
+| `tooltip(target) { ... }` | Compact anchored tooltip |
+| `spotlight(target) { ... }` | Spotlight cutout only |
+| `banner(target) { ... }` | Bottom banner |
+| `fullScreen(target) { ... }` | Full-screen centered card |
+| `add(GuideStep)` | Add a pre-built step |
+| `overlayParent(viewGroup)` | Custom overlay attachment point |
+| `guideContent(GuideContent)` | Custom UI provider |
+| `setListener(WalkthroughListener)` | Java-friendly lifecycle callbacks |
+| `doOnStepShown`, `doOnComplete`, `doOnDismiss`, `doOnOutsideClick` | Kotlin callback helpers |
+| `show()` | Returns [WalkthroughController] |
+
+### Step builder properties
+
+| Property | Purpose |
+|----------|---------|
+| `title`, `description` | Copy |
+| `backText`, `nextText` | Navigation button labels |
+| `titleColor`, `descriptionColor` | Text colors |
+| `backTextColor`, `nextTextColor` | Button label colors |
+| `background`, `backgroundColor` | Content panel background |
+| `backBackground`, `nextBackground` | Button backgrounds |
+| `padding` | Inner padding (`Padding` in dp) |
+| `placement` | `Placement.TOP`, `CENTER`, or `BOTTOM` |
+| `dimBackground`, `highlightTarget` | Overlay behavior |
+| `advanceOnOutsideTap` | Tap outside advances step |
+| `showArrow` | Tooltip pointer arrow (tooltip only) |
 
 ### GuidePresentation defaults
 

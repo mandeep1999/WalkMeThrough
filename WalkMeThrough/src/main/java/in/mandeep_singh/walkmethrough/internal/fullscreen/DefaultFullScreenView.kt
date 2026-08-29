@@ -5,9 +5,9 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.view.isVisible
+import `in`.mandeep_singh.walkmethrough.GuideActions
 import `in`.mandeep_singh.walkmethrough.GuideStep
 import `in`.mandeep_singh.walkmethrough.Padding
-import `in`.mandeep_singh.walkmethrough.WalkthroughActions
 import `in`.mandeep_singh.walkmethrough.library.databinding.LayoutFullScreenBinding
 import `in`.mandeep_singh.walkmethrough.internal.util.WalkthroughPositioning
 
@@ -15,39 +15,39 @@ internal object DefaultFullScreenView {
 
     fun create(
         context: Context,
-        guideStep: GuideStep,
+        step: GuideStep,
         stepIndex: Int,
         totalSteps: Int,
-        actions: WalkthroughActions,
+        actions: GuideActions,
     ): View {
         val binding = LayoutFullScreenBinding.inflate(LayoutInflater.from(context))
-        bind(binding, guideStep, stepIndex, actions)
+        bind(binding, step, stepIndex, actions)
         return binding.root
     }
 
     private fun bind(
         binding: LayoutFullScreenBinding,
-        guideStep: GuideStep,
+        step: GuideStep,
         stepIndex: Int,
-        actions: WalkthroughActions,
+        actions: GuideActions,
     ) {
         val showBack = stepIndex > 0
         val context = binding.root.context
 
-        binding.fullScreenTitleTextView.isVisible = !guideStep.titleText.isNullOrBlank()
-        guideStep.titleText?.let { binding.fullScreenTitleTextView.text = it }
-        guideStep.titleTextColor?.let { binding.fullScreenTitleTextView.setTextColor(it) }
+        binding.fullScreenTitleTextView.isVisible = !step.title.isNullOrBlank()
+        step.title?.let { binding.fullScreenTitleTextView.text = it }
+        step.titleColor?.let { binding.fullScreenTitleTextView.setTextColor(it) }
 
-        binding.fullScreenDescriptionTextView.isVisible = !guideStep.descriptionText.isNullOrBlank()
-        guideStep.descriptionText?.let { binding.fullScreenDescriptionTextView.text = it }
-        guideStep.descriptionTextColor?.let { binding.fullScreenDescriptionTextView.setTextColor(it) }
+        binding.fullScreenDescriptionTextView.isVisible = !step.description.isNullOrBlank()
+        step.description?.let { binding.fullScreenDescriptionTextView.text = it }
+        step.descriptionColor?.let { binding.fullScreenDescriptionTextView.setTextColor(it) }
 
-        setBackground(binding, guideStep.dialogBackground, guideStep.dialogBackgroundColor)
-        setUpNextButton(binding, guideStep, actions)
-        setUpBackButton(binding, guideStep, showBack, actions)
+        setBackground(binding, step.background, step.backgroundColor)
+        setUpNextButton(binding, step, actions)
+        setUpBackButton(binding, step, showBack, actions)
         binding.fullScreenCloseIcon.setOnClickListener { actions.onClose() }
         binding.fullScreenSpace.isVisible = showBack && binding.fullScreenNextButton.isVisible
-        setUpPadding(binding, guideStep.dialogPadding, context)
+        setUpPadding(binding, step.padding, context)
     }
 
     private fun setBackground(
@@ -61,28 +61,28 @@ internal object DefaultFullScreenView {
 
     private fun setUpNextButton(
         binding: LayoutFullScreenBinding,
-        guideStep: GuideStep,
-        actions: WalkthroughActions,
+        step: GuideStep,
+        actions: GuideActions,
     ) {
-        guideStep.nextButtonBackground?.let { binding.fullScreenNextButton.background = it }
-        guideStep.nextButtonBackgroundColor?.let { binding.fullScreenNextButton.setBackgroundColor(it) }
-        binding.fullScreenNextButton.isVisible = !guideStep.nextButtonText.isNullOrBlank()
-        binding.fullScreenNextButton.text = guideStep.nextButtonText
-        guideStep.nextButtonTextColor?.let { binding.fullScreenNextButton.setTextColor(it) }
+        step.nextBackground?.let { binding.fullScreenNextButton.background = it }
+        step.nextBackgroundColor?.let { binding.fullScreenNextButton.setBackgroundColor(it) }
+        binding.fullScreenNextButton.isVisible = !step.nextText.isNullOrBlank()
+        binding.fullScreenNextButton.text = step.nextText
+        step.nextTextColor?.let { binding.fullScreenNextButton.setTextColor(it) }
         binding.fullScreenNextButton.setOnClickListener { actions.onNext() }
     }
 
     private fun setUpBackButton(
         binding: LayoutFullScreenBinding,
-        guideStep: GuideStep,
+        step: GuideStep,
         showBack: Boolean,
-        actions: WalkthroughActions,
+        actions: GuideActions,
     ) {
-        guideStep.backButtonBackground?.let { binding.fullScreenBackButton.background = it }
-        guideStep.backButtonBackgroundColor?.let { binding.fullScreenBackButton.setBackgroundColor(it) }
-        binding.fullScreenBackButton.isVisible = showBack && !guideStep.backButtonText.isNullOrBlank()
-        binding.fullScreenBackButton.text = guideStep.backButtonText
-        guideStep.backButtonTextColor?.let { binding.fullScreenBackButton.setTextColor(it) }
+        step.backBackground?.let { binding.fullScreenBackButton.background = it }
+        step.backBackgroundColor?.let { binding.fullScreenBackButton.setBackgroundColor(it) }
+        binding.fullScreenBackButton.isVisible = showBack && !step.backText.isNullOrBlank()
+        binding.fullScreenBackButton.text = step.backText
+        step.backTextColor?.let { binding.fullScreenBackButton.setTextColor(it) }
         binding.fullScreenBackButton.setOnClickListener {
             if (showBack) actions.onBack()
         }

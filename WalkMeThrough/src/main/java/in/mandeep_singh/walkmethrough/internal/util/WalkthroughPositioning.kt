@@ -5,7 +5,7 @@ import android.content.Context
 import android.graphics.Rect
 import android.util.TypedValue
 import `in`.mandeep_singh.walkmethrough.GuidePresentation
-import `in`.mandeep_singh.walkmethrough.Position
+import `in`.mandeep_singh.walkmethrough.Placement
 
 object WalkthroughPositioning {
 
@@ -26,24 +26,24 @@ object WalkthroughPositioning {
         bottomOverlayHeight: Int,
         dialogHeight: Int,
         highlightHeight: Int,
-        dialogPosition: Position?,
+        placement: Placement?,
         context: Context,
     ): Int {
         val fiftyDp = dpToPx(context, 50f)
         val sixteenDp = dpToPx(context, 16f)
 
         return if (topOverlayHeight > bottomOverlayHeight) {
-            when (dialogPosition) {
-                Position.TOP -> sixteenDp
-                Position.CENTER -> topOverlayHeight / 2 - dialogHeight / 2
-                Position.BOTTOM -> topOverlayHeight - dialogHeight - highlightHeight - fiftyDp
+            when (placement) {
+                Placement.TOP -> sixteenDp
+                Placement.CENTER -> topOverlayHeight / 2 - dialogHeight / 2
+                Placement.BOTTOM -> topOverlayHeight - dialogHeight - highlightHeight - fiftyDp
                 else -> topOverlayHeight / 2 - dialogHeight / 2
             }
         } else {
-            when (dialogPosition) {
-                Position.TOP -> topOverlayHeight + highlightHeight + sixteenDp
-                Position.CENTER -> topOverlayHeight + highlightHeight + (bottomOverlayHeight / 2) - dialogHeight / 2
-                Position.BOTTOM -> topOverlayHeight + highlightHeight - dialogHeight + bottomOverlayHeight - sixteenDp
+            when (placement) {
+                Placement.TOP -> topOverlayHeight + highlightHeight + sixteenDp
+                Placement.CENTER -> topOverlayHeight + highlightHeight + (bottomOverlayHeight / 2) - dialogHeight / 2
+                Placement.BOTTOM -> topOverlayHeight + highlightHeight - dialogHeight + bottomOverlayHeight - sixteenDp
                 else -> topOverlayHeight + highlightHeight + (bottomOverlayHeight / 2) - dialogHeight / 2
             }
         }
@@ -72,26 +72,26 @@ object WalkthroughPositioning {
         targetHeight: Int,
         tooltipWidth: Int,
         tooltipHeight: Int,
-        position: Position?,
+        placement: Placement?,
         context: Context,
     ): Pair<Int, Int> {
         val gap = dpToPx(context, 8f)
         val horizontalMargin = dpToPx(context, 12f)
 
-        val resolvedPosition = position ?: if (targetTop > windowHeight(context) / 2) {
-            Position.TOP
+        val resolvedPlacement = placement ?: if (targetTop > windowHeight(context) / 2) {
+            Placement.TOP
         } else {
-            Position.BOTTOM
+            Placement.BOTTOM
         }
 
         val targetCenterX = targetLeft + targetWidth / 2
         var left = targetCenterX - tooltipWidth / 2
         left = left.coerceIn(horizontalMargin, overlayWidth - tooltipWidth - horizontalMargin)
 
-        val top = when (resolvedPosition) {
-            Position.TOP -> targetTop - tooltipHeight - gap
-            Position.BOTTOM -> targetTop + targetHeight + gap
-            Position.CENTER -> targetTop + targetHeight / 2 - tooltipHeight / 2
+        val top = when (resolvedPlacement) {
+            Placement.TOP -> targetTop - tooltipHeight - gap
+            Placement.BOTTOM -> targetTop + targetHeight + gap
+            Placement.CENTER -> targetTop + targetHeight / 2 - tooltipHeight / 2
         }
 
         return left to top

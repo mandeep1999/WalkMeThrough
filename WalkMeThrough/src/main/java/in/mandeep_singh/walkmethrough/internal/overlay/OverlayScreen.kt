@@ -13,7 +13,7 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import `in`.mandeep_singh.walkmethrough.GuidePresentation
-import `in`.mandeep_singh.walkmethrough.Position
+import `in`.mandeep_singh.walkmethrough.Placement
 import `in`.mandeep_singh.walkmethrough.internal.util.WalkthroughPositioning
 
 internal class OverlayScreen @JvmOverloads constructor(
@@ -76,13 +76,13 @@ internal class OverlayScreen @JvmOverloads constructor(
         parentViewGroup: ViewGroup,
         viewToHighlight: View,
         contentView: View?,
-        contentPosition: Position?,
+        contentPlacement: Placement?,
         presentation: GuidePresentation,
         dimBackground: Boolean,
         highlightTarget: Boolean,
         onOutsideClick: (() -> Unit)?,
     ) {
-        applyStepConfig(viewToHighlight, contentView, contentPosition, presentation, dimBackground, highlightTarget, onOutsideClick)
+        applyStepConfig(viewToHighlight, contentView, contentPlacement, presentation, dimBackground, highlightTarget, onOutsideClick)
         if (parent == null) {
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
             parentViewGroup.addView(this)
@@ -93,13 +93,13 @@ internal class OverlayScreen @JvmOverloads constructor(
     fun updateStep(
         viewToHighlight: View,
         contentView: View?,
-        contentPosition: Position?,
+        contentPlacement: Placement?,
         presentation: GuidePresentation,
         dimBackground: Boolean,
         highlightTarget: Boolean,
         onOutsideClick: (() -> Unit)?,
     ) {
-        applyStepConfig(viewToHighlight, contentView, contentPosition, presentation, dimBackground, highlightTarget, onOutsideClick)
+        applyStepConfig(viewToHighlight, contentView, contentPlacement, presentation, dimBackground, highlightTarget, onOutsideClick)
         invalidate()
     }
 
@@ -113,7 +113,7 @@ internal class OverlayScreen @JvmOverloads constructor(
     private fun applyStepConfig(
         viewToHighlight: View,
         contentView: View?,
-        contentPosition: Position?,
+        contentPlacement: Placement?,
         presentation: GuidePresentation,
         dimBackground: Boolean,
         highlightTarget: Boolean,
@@ -125,13 +125,13 @@ internal class OverlayScreen @JvmOverloads constructor(
         this.highlightTarget = highlightTarget
         this.presentation = presentation
         removeAllViews()
-        positionContent(contentView, viewToHighlight, contentPosition, presentation)
+        positionContent(contentView, viewToHighlight, contentPlacement, presentation)
     }
 
     private fun positionContent(
         contentView: View?,
         highlightedView: View,
-        contentPosition: Position?,
+        contentPlacement: Placement?,
         presentation: GuidePresentation,
     ) {
         if (contentView == null) {
@@ -139,19 +139,19 @@ internal class OverlayScreen @JvmOverloads constructor(
         }
 
         when (presentation) {
-            GuidePresentation.TOOLTIP -> positionTooltip(contentView, highlightedView, contentPosition)
+            GuidePresentation.TOOLTIP -> positionTooltip(contentView, highlightedView, contentPlacement)
             GuidePresentation.BANNER -> positionBanner(contentView)
             GuidePresentation.FULL_SCREEN -> positionFullScreen(contentView)
             GuidePresentation.CARD,
             GuidePresentation.SPOTLIGHT,
-            -> positionCard(contentView, highlightedView, contentPosition)
+            -> positionCard(contentView, highlightedView, contentPlacement)
         }
     }
 
     private fun positionTooltip(
         contentView: View,
         highlightedView: View,
-        contentPosition: Position?,
+        contentPlacement: Placement?,
     ) {
         tooltipParams.topMargin = -3500
         tooltipParams.leftMargin = 0
@@ -177,7 +177,7 @@ internal class OverlayScreen @JvmOverloads constructor(
                     targetHeight = highlightedView.height,
                     tooltipWidth = contentView.width,
                     tooltipHeight = contentView.height,
-                    position = contentPosition,
+                    placement = contentPlacement,
                     context = context,
                 )
 
@@ -203,7 +203,7 @@ internal class OverlayScreen @JvmOverloads constructor(
     private fun positionCard(
         contentView: View,
         highlightedView: View,
-        contentPosition: Position?,
+        contentPlacement: Placement?,
     ) {
         dialogParams.topMargin = -3500
         addView(contentView, dialogParams)
@@ -227,7 +227,7 @@ internal class OverlayScreen @JvmOverloads constructor(
                     bottomOverlayHeight = bottomOverlayHeight,
                     dialogHeight = contentView.height,
                     highlightHeight = highlightHeight,
-                    dialogPosition = contentPosition,
+                    placement = contentPlacement,
                     context = context,
                 )
                 contentView.layoutParams = dialogParams
