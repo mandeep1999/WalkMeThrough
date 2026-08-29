@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Rect
 import android.util.TypedValue
 import `in`.mandeep_singh.walkmethrough.Position
+import `in`.mandeep_singh.walkmethrough.StepStyle
 
 object WalkthroughPositioning {
 
@@ -59,4 +60,46 @@ object WalkthroughPositioning {
         val activity = context as? Activity
         return activity?.resources?.displayMetrics?.heightPixels ?: 0
     }
+
+    /**
+     * Computes [leftMargin, topMargin] for a tooltip bubble anchored near a highlighted target.
+     */
+    fun getTooltipMargins(
+        overlayWidth: Int,
+        targetLeft: Int,
+        targetTop: Int,
+        targetWidth: Int,
+        targetHeight: Int,
+        tooltipWidth: Int,
+        tooltipHeight: Int,
+        position: Position?,
+        context: Context,
+    ): Pair<Int, Int> {
+        val gap = dpToPx(context, 8f)
+        val horizontalMargin = dpToPx(context, 12f)
+
+        val resolvedPosition = position ?: if (targetTop > windowHeight(context) / 2) {
+            Position.TOP
+        } else {
+            Position.BOTTOM
+        }
+
+        val targetCenterX = targetLeft + targetWidth / 2
+        var left = targetCenterX - tooltipWidth / 2
+        left = left.coerceIn(horizontalMargin, overlayWidth - tooltipWidth - horizontalMargin)
+
+        val top = when (resolvedPosition) {
+            Position.TOP -> targetTop - tooltipHeight - gap
+            Position.BOTTOM -> targetTop + targetHeight + gap
+            Position.CENTER -> targetTop + targetHeight / 2 - tooltipHeight / 2
+        }
+
+        return left to top
+    }
+
+    fun resolveDimBackground(stepStyle: StepStyle, dimBackground: Boolean?): Boolean {
+        return dimBackground ?: (stepStyle == StepStyle.DIALOG)
+    }
+
+    fun resolveHighlightTarget(highlightTarget: Boolean?): Boolean = highlightTarget ?: true
 }

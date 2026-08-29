@@ -50,6 +50,46 @@ Walkthrough.from(this)
 
 The overlay attaches to the activity content root automatically. Override with `setOverlayParent(viewGroup)` if needed.
 
+## Tooltip steps
+
+Use lightweight tooltip bubbles for quick hints without a full dialog card:
+
+```kotlin
+Walkthrough.from(this)
+    .tooltipStep(findViewById(R.id.search_icon)) {
+        titleText = "Search"
+        descriptionText = "Find anything in the app."
+        dialogPosition = Position.BOTTOM
+    }
+    .tooltipStep(findViewById(R.id.filter_icon)) {
+        titleText = "Filters"
+        dialogPosition = Position.TOP
+    }
+    .onComplete { /* finished */ }
+    .show()
+```
+
+Tooltip defaults: no dimmed background, no target cutout, tap outside advances to the next step. Override per step:
+
+```kotlin
+.tooltipStep(target) {
+    dimBackground = true
+    highlightTarget = true
+    advanceOnOutsideTap = false
+}
+```
+
+Mix dialog and tooltip steps in one session:
+
+```kotlin
+Walkthrough.from(this)
+    .step(profileView) { titleText = "Welcome"; nextButtonText = "Next" }
+    .tooltipStep(searchView) { titleText = "Quick search tip" }
+    .show()
+```
+
+Custom tooltip UI via `setTooltipContent(...)`.
+
 ## Single-step API (legacy)
 
 `WalkthroughBuilder` remains available for one-off highlights:
@@ -86,7 +126,8 @@ Walkthrough.from(this)
 - `step(targetView) { ... }` — add a step with optional styling fields
 - `onStepShown`, `onComplete`, `onDismiss`, `onOutsideClick` — session callbacks
 - `show()` returns a `WalkthroughCoordinator` for manual `dismiss()`
-- Per-step fields include title, description, button text/colors/backgrounds, `dialogPosition`, and `dialogPadding`
+- Per-step fields include title, description, button text/colors/backgrounds, `dialogPosition`, `dialogPadding`, `StepStyle`, `dimBackground`, `highlightTarget`, and `advanceOnOutsideTap`
+- `tooltipStep(...)` — shorthand for compact tooltip bubbles
 
 ## Screenshots
 

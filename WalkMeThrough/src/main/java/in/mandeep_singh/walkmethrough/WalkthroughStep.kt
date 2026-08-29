@@ -8,6 +8,7 @@ import android.view.View
  */
 data class WalkthroughStep(
     val targetView: View,
+    val style: StepStyle = StepStyle.DIALOG,
     val titleText: String? = null,
     val descriptionText: String? = null,
     val backButtonText: String? = null,
@@ -24,12 +25,21 @@ data class WalkthroughStep(
     val backButtonBackground: Drawable? = null,
     val dialogPadding: Padding? = null,
     val dialogPosition: Position? = null,
+    /** When null, defaults to true for [StepStyle.DIALOG] and false for [StepStyle.TOOLTIP]. */
+    val dimBackground: Boolean? = null,
+    /** When null, defaults to true. */
+    val highlightTarget: Boolean? = null,
+    /** Whether the tooltip arrow is shown (tooltip style only). */
+    val showTooltipArrow: Boolean = true,
+    /** Tooltip steps advance to the next step when the user taps outside the bubble. */
+    val advanceOnOutsideTap: Boolean = false,
 )
 
 /**
  * Fluent builder for [WalkthroughStep].
  */
 class WalkthroughStepBuilder(private val targetView: View) {
+    var style: StepStyle = StepStyle.DIALOG
     var titleText: String? = null
     var descriptionText: String? = null
     var backButtonText: String? = null
@@ -46,9 +56,14 @@ class WalkthroughStepBuilder(private val targetView: View) {
     var backButtonBackground: Drawable? = null
     var dialogPadding: Padding? = null
     var dialogPosition: Position? = null
+    var dimBackground: Boolean? = null
+    var highlightTarget: Boolean? = null
+    var showTooltipArrow: Boolean = true
+    var advanceOnOutsideTap: Boolean = false
 
     fun build(): WalkthroughStep = WalkthroughStep(
         targetView = targetView,
+        style = style,
         titleText = titleText,
         descriptionText = descriptionText,
         backButtonText = backButtonText,
@@ -65,5 +80,9 @@ class WalkthroughStepBuilder(private val targetView: View) {
         backButtonBackground = backButtonBackground,
         dialogPadding = dialogPadding,
         dialogPosition = dialogPosition,
+        dimBackground = dimBackground,
+        highlightTarget = highlightTarget,
+        showTooltipArrow = showTooltipArrow,
+        advanceOnOutsideTap = advanceOnOutsideTap,
     )
 }

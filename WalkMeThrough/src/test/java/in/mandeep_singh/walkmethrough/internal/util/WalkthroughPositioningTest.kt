@@ -26,16 +26,19 @@ class WalkthroughPositioningTest {
     }
 
     @Test
-    fun centerPositionWhenSpaceBelowIsLarger() {
-        val topMargin = WalkthroughPositioning.getDialogTopMargin(
-            topOverlayHeight = 100,
-            bottomOverlayHeight = 400,
-            dialogHeight = 80,
-            highlightHeight = 50,
-            dialogPosition = Position.CENTER,
+    fun tooltipBelowTarget() {
+        val (left, top) = WalkthroughPositioning.getTooltipMargins(
+            overlayWidth = 400,
+            targetLeft = 100,
+            targetTop = 100,
+            targetWidth = 48,
+            targetHeight = 48,
+            tooltipWidth = 120,
+            tooltipHeight = 60,
+            position = Position.BOTTOM,
             context = context,
         )
-        val expected = 100 + 50 + (400 / 2) - (80 / 2)
-        assertEquals(expected, topMargin)
+        assertEquals(100 + 48 / 2 - 120 / 2, left)
+        assertEquals(100 + 48 + WalkthroughPositioning.dpToPx(context, 8f), top)
     }
 }

@@ -16,12 +16,27 @@ class WalkthroughSession internal constructor(private val activity: Activity) {
     private var onDismiss: (() -> Unit)? = null
     private var onOutsideClick: (() -> Unit)? = null
     private var dialogContent: WalkthroughDialogContent? = null
+    private var tooltipContent: WalkthroughTooltipContent? = null
     private var overlayParent: ViewGroup? = null
 
     fun addStep(step: WalkthroughStep) = apply { steps.add(step) }
 
     fun step(targetView: View, configure: WalkthroughStepBuilder.() -> Unit = {}) = apply {
         val builder = WalkthroughStepBuilder(targetView)
+        builder.configure()
+        steps.add(builder.build())
+    }
+
+    /**
+     * Adds a compact tooltip step anchored near [targetView].
+     */
+    fun tooltipStep(targetView: View, configure: WalkthroughStepBuilder.() -> Unit = {}) = apply {
+        val builder = WalkthroughStepBuilder(targetView).apply {
+            style = StepStyle.TOOLTIP
+            dimBackground = false
+            highlightTarget = false
+            advanceOnOutsideTap = true
+        }
         builder.configure()
         steps.add(builder.build())
     }
@@ -35,6 +50,8 @@ class WalkthroughSession internal constructor(private val activity: Activity) {
     fun onOutsideClick(listener: () -> Unit) = apply { onOutsideClick = listener }
 
     fun setDialogContent(content: WalkthroughDialogContent) = apply { dialogContent = content }
+
+    fun setTooltipContent(content: WalkthroughTooltipContent) = apply { tooltipContent = content }
 
     /**
      * Optional override for the view group that hosts the overlay. By default the activity content root is used.
@@ -52,6 +69,7 @@ class WalkthroughSession internal constructor(private val activity: Activity) {
             steps = steps.toList(),
             overlayParent = overlayParent,
             dialogContent = dialogContent,
+            tooltipContent = tooltipContent,
             onStepShown = onStepShown,
             onComplete = onComplete,
             onDismiss = onDismiss,
