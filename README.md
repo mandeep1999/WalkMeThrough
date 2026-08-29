@@ -160,7 +160,6 @@ Walkthrough.with(this)
 <p align="center">
   <img src="docs/screenshots/screenshot-154934.webp" alt="Walkthrough card step" width="180" height="400"/>
   <img src="docs/screenshots/screenshot-155038.webp" alt="Walkthrough tooltip step" width="180" height="400"/>
-  <img src="docs/screenshots/walkthrough-demo.webp" alt="Walkthrough mixed presentations" width="180" height="252"/>
 </p>
 
 ## License
